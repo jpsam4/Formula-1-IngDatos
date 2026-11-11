@@ -1,0 +1,12 @@
+# Backups y archivos de SQL Server
+*.bak
+*.mdf
+*.ldf
+*.ndf
+
+# Temporales de draw.io y del sistema
+*.drawio.bkp
+.$*.drawio.*
+~$*
+Thumbs.db
+.DS_Store
