@@ -1,0 +1,17 @@
+# Backups y archivos de datos de SQL Server
+*.bak
+*.mdf
+*.ldf
+*.ndf
+
+# Respaldos automáticos de draw.io
+*.drawio.bkp
+*.drawio.dtmp
+
+# Archivos temporales de Office
+~$*
+
+# Sistema operativo
+Thumbs.db
+desktop.ini
+.DS_Store
