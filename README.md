@@ -35,7 +35,7 @@ avance del documento:
 
 | Sección | Archivo | Estado |
 |---|---|---|
-| Descripción, alcance y reglas de negocio | [doc/01_alcance.md](doc/01_alcance.md) | pendiente |
+| Descripción, alcance y reglas de negocio | [doc/01_alcance.md](doc/01_alcance.md) | listo para revisar |
 | DER | [doc/02_der.md](doc/02_der.md) | pendiente |
 | Normalización | [doc/03_normalizacion.md](doc/03_normalizacion.md) | pendiente |
 | Modelo de tablas, diccionario de datos | | pendiente |
