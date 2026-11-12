@@ -2,10 +2,10 @@
 
 TP integrador de Ingeniería de Datos I (segundo cuatrimestre 2026, prof. Alejandro Feichubuinm).
 
-es la base de datos para la gestión interna de una sola escudería de F1, Red Bull Racing, hecha en Microsoft SQL Server 2025. guarda cuatro cosas:
+Es la base de datos para la gestión interna de una sola escudería de F1, Red Bull Racing, hecha en Microsoft SQL Server 2025. Guarda cuatro cosas:
 
 - La parte deportiva: Grandes Premios, sesiones, resultados y puntos.
-- el personal: empleados, pilotos y contratos.
+- El personal: empleados, pilotos y contratos.
 - La parte técnica: chasis, piezas, cuánto se usó cada una y las penalizaciones por pasarse del límite
 - Las finanzas: gastos, proveedores y el tope de gasto anual.
 
@@ -31,7 +31,7 @@ doc/der/    el DER en draw.io y sus imagenes
 scripts/    los scripts SQL, numerados en el orden en que se ejecutan
 ```
 
-avance del documento:
+Avance del documento:
 
 | Sección | Archivo | Estado |
 |---|---|---|
@@ -42,7 +42,7 @@ avance del documento:
 | Consultas, vistas, procedimientos, triggers, cursor, funciones | | pendiente |
 | Manejo de errores, seguridad, conclusiones | | pendiente |
 
-Las convenciones de nombres, tipos y códigos de error estan en [doc/convenciones.md](doc/convenciones.md). leerlas antes de escribir la primera tabla porfa.
+Las convenciones de nombres, tipos y códigos de error estan en [doc/convenciones.md](doc/convenciones.md). Leerlas antes de escribir la primera tabla porfa.
 
 Las definiciones del proyecto (dominio, motor, qué tiene a cargo cada área, lo que hablamos con el profesor y los acuerdos del equipo) están en [doc/definiciones.md](doc/definiciones.md).
 
@@ -59,7 +59,7 @@ El repo es para organizarnos: la entrega no se hace por GitHub.
 
 ## Cómo armar la base
 
-todavía no hay scripts. Cuando estén, se ejecutan en este orden sobre SQL Server 2025:
+Todavía no hay scripts. Cuando estén, se ejecutan en este orden sobre SQL Server 2025:
 
 1. `scripts/01_estructura.sql`
 2. `scripts/02_datos.sql`

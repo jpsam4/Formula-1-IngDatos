@@ -2,22 +2,22 @@
 
 ## Descripción del sistema
 
-es una base de datos para la gestión interna de una escudería de Fórmula 1. Elegimos Red Bull Racing. Registra lo que pasa en cada Gran Premio, quién trabaja en el equipo y con qué contrato, qué piezas usa cada auto y cuánto gasta la escudería en el año. Ademas de guardar esos datos hace cumplir las reglas del reglamento y del equipo, como el límite de piezas por temporada o el tope de gasto anual.
+Es una base de datos para la gestión interna de una escudería de Fórmula 1. Elegimos Red Bull Racing. Registra lo que pasa en cada Gran Premio, quién trabaja en el equipo y con qué contrato, qué piezas usa cada auto y cuánto gasta la escudería en el año. Ademas de guardar esos datos hace cumplir las reglas del reglamento y del equipo, como el límite de piezas por temporada o el tope de gasto anual.
 
 ## Contexto
 
 Una escudería de F1 corre unos 24 Grandes Premios por temporada con dos autos. Cada Gran Premio se corre en un fin de semana con varias sesiones: prácticas, clasificación y carrera, y en algunos fines de semana además una clasificación sprint y una carrera sprint. Las sesiones que reparten puntos lo hacen según la posición de llegada.
 
-para correr, la escudería tiene que resolver tres cosas además de las carreras.
+Para correr, la escudería tiene que resolver tres cosas además de las carreras.
 
 
-la primera es el personal. Hay pilotos, ingenieros, mecánicos y administrativos, todos con contrato. De los pilotos, dos son titulares y suele haber uno de reserva.
+La primera es el personal. Hay pilotos, ingenieros, mecánicos y administrativos, todos con contrato. De los pilotos, dos son titulares y suele haber uno de reserva.
 
 La segunda son las piezas. El reglamento limita cuántas piezas de cada tipo (motor, caja de cambios, etc.) puede usar cada piloto en la temporada. Si se pasa, recibe una penalización en la grilla de largada. Ademas cada pieza tiene una vida útil en kilómetros, y cuando llega a ese número hay que retirarla.
 
-la tercera es la plata. el reglamento fija un tope de gasto anual. superarlo trae sanciones graves, así que el equipo necesita saber en todo momento cuánto gastó y cuánto le queda.
+La tercera es la plata. El reglamento fija un tope de gasto anual. Superarlo trae sanciones graves, así que el equipo necesita saber en todo momento cuánto gastó y cuánto le queda.
 
-hoy todo eso puede estar repartido en planillas sueltas, y en una planilla nada impide cargar a un piloto sin contrato, usar una pieza que ya se retiró o pasarse del tope sin que nadie lo note.
+Hoy todo eso puede estar repartido en planillas sueltas, y en una planilla nada impide cargar a un piloto sin contrato, usar una pieza que ya se retiró o pasarse del tope sin que nadie lo note.
 
 ## Objetivo de la base de datos
 
@@ -26,7 +26,7 @@ Centralizar la información deportiva, de personal, técnica y financiera de la 
 
 ## Actores
 
-cada actor despues se convierte en un rol de seguridad.
+Cada actor despues se convierte en un rol de seguridad.
 
 | Actor | Qué hace en el sistema |
 |---|---|
@@ -36,22 +36,22 @@ cada actor despues se convierte en un rol de seguridad.
 | Finanzas | Registra las compras y los gastos y sigue el tope anual |
 | Consulta | Ve información general (calendario, resultados, nómina sin sueldos), sin modificar nada |
 
-los datos fijos (países, circuitos, tipos de sesión, tabla de puntos, tipos de pieza, límites por temporada y tope de cada año) los carga el administrador de la base.
+Los datos fijos (países, circuitos, tipos de sesión, tabla de puntos, tipos de pieza, límites por temporada y tope de cada año) los carga el administrador de la base.
 
 ## Información a guardar
 
-parte deportiva:
+Parte deportiva:
 
 - Las temporadas y, para cada una, el calendario de Grandes Premios con su número de fecha, el circuito y las fechas del fin de semana. También si ese fin de semana tiene formato sprint.
-- los circuitos, con su ciudad, su país y su longitud.
+- Los circuitos, con su ciudad, su país y su longitud.
 - Las sesiones de cada Gran Premio, de qué tipo son y cuándo se corren.
-- Cuántos puntos da cada posición en cada tipo de sesión. esto cambia según la temporada
+- Cuántos puntos da cada posición en cada tipo de sesión. Esto cambia según la temporada
 - El resultado de cada piloto en cada sesión: si terminó, en qué posición; si no, por qué (abandono, descalificación o no largó).
 
 Personal:
 
 - Los empleados, con sus datos personales, su nacionalidad y su puesto.
-- de los pilotos, además, su número de auto.
+- De los pilotos, además, su número de auto.
 - Los contratos de cada empleado: desde cuándo, hasta cuándo (puede no tener fecha de fin), el sueldo mensual y, para los pilotos, si es titular o reserva.
 - El historial de cambios de sueldo: cuándo cambió, de cuánto a cuánto y quién lo hizo.
 
@@ -66,7 +66,7 @@ Parte tecnica:
 
 Finanzas:
 
-- los proveedores, con su identificación fiscal y su país.
+- Los proveedores, con su identificación fiscal y su país.
 - Las categorías de gasto y si cada una cuenta o no para el tope.
 - Cada gasto con su fecha, su monto en dólares, su categoría, su proveedor y, si fue la compra de una pieza, cuál.
 - El tope de gasto de cada año y el porcentaje a partir del cual hay que dar aviso.
@@ -74,7 +74,7 @@ Finanzas:
 
 ## Reglas de negocio
 
-las reglas están numeradas porque cada objeto de la base dice qué regla implementa. La ultima columna es el mecanismo que pensamos usar, se confirma cuando se programe cada objeto.
+Las reglas están numeradas porque cada objeto de la base dice qué regla implementa. La ultima columna es el mecanismo que pensamos usar, se confirma cuando se programe cada objeto.
 
 | Regla | Qué dice | Mecanismo previsto |
 |---|---|---|
@@ -104,29 +104,29 @@ las reglas están numeradas porque cada objeto de la base dice qué regla implem
 ## Procesos principales
 
 1. Armar la temporada. El administrador carga la temporada, su tope, sus límites de piezas y su tabla de puntos. El director deportivo carga los Grandes Premios y sus sesiones.
-2. inscribir a los pilotos. Para cada Gran Premio, el director deportivo inscribe a dos pilotos con contrato vigente, cada uno con un chasis de esa temporada.
+2. Inscribir a los pilotos. Para cada Gran Premio, el director deportivo inscribe a dos pilotos con contrato vigente, cada uno con un chasis de esa temporada.
 3. Correr el fin de semana. El ingeniero de pista registra qué piezas usa cada auto y cuántos kilómetros hace con cada una. Si una pieza nueva pasa el límite de la temporada, el piloto queda penalizado. El director deportivo carga los resultados de cada sesión.
 4. Cerrar el Gran Premio. El ingeniero de pista lo cierra: a cada pieza usada se le suman los kilómetros, y las que llegaron a su vida útil se retiran. Después del cierre no se pueden cargar más usos de piezas.
-5. Comprar. finanzas registra cada compra. Si es una pieza, la pieza y su gasto se dan de alta juntos. Si el gasto haría pasar el tope, se rechaza. Si hace cruzar el porcentaje de aviso, queda una alerta.
+5. Comprar. Finanzas registra cada compra. Si es una pieza, la pieza y su gasto se dan de alta juntos. Si el gasto haría pasar el tope, se rechaza. Si hace cruzar el porcentaje de aviso, queda una alerta.
 6. Contratar. Recursos Humanos da de alta empleados y contratos y actualiza sueldos. Cada cambio de sueldo queda registrado.
 
 ## Restricciones del sistema
 
-son los límites que le pusimos al modelo a propósito.
+Son los límites que le pusimos al modelo a propósito.
 
 
 - Es una sola escudería (Red Bull Racing). No guardamos a los equipos rivales, así que no hay tabla de posiciones del campeonato. Lo que sí se puede calcular es cuántos puntos sumó cada uno de nuestros pilotos.
-- todos los montos estan en dólares y no manejamos tipo de cambio.
+- Todos los montos estan en dólares y no manejamos tipo de cambio.
 - El tope se controla sobre los gastos operativos. Los sueldos no entran en el cálculo (en la F1 real la mayoría sí cuenta).
 - El uso de piezas se registra por Gran Premio, no por sesión.
-- una temporada coincide con un año calendario.
+- Una temporada coincide con un año calendario.
 - Un gasto de un año que no tiene tope cargado se rechaza.
 
 ## Relaciones entre los elementos
 
 Cada Gran Premio pertenece a una temporada y se corre en un circuito, y cada circuito está en un país. Un Gran Premio tiene varias sesiones, y cada sesión es de un tipo. La tabla de puntos se define por temporada y tipo de sesión.
 
-un piloto es un empleado con datos propios. cada empleado ocupa un puesto, tiene una nacionalidad y firma uno o más contratos a lo largo del tiempo. cada cambio de sueldo de un contrato queda en su historial.
+Un piloto es un empleado con datos propios. Cada empleado ocupa un puesto, tiene una nacionalidad y firma uno o más contratos a lo largo del tiempo. Cada cambio de sueldo de un contrato queda en su historial.
 
 Un piloto se inscribe en un Gran Premio con un chasis de esa temporada. Esa inscripción es la que después tiene resultados en cada sesión, usos de piezas y penalizaciones. Cada pieza es de un tipo, y cada tipo tiene un límite de piezas por temporada.
 
