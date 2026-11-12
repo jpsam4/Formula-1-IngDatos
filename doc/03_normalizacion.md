@@ -1,6 +1,6 @@
 # Normalización
 
-Para mostrar el proceso partimos de tres planillas que alguien de la escudería podría tener hoy en un Excel, y las llevamos paso a paso hasta 3FN. después revisamos FNBC y que las descomposiciones no pierdan información (Rissanen).
+Para mostrar el proceso partimos de tres planillas que alguien de la escudería podría tener hoy en un Excel, y las llevamos paso a paso hasta 3FN. Después revisamos FNBC y que las descomposiciones no pierdan información (Rissanen).
 
 Repaso rápido de lo que usamos:
 
@@ -23,7 +23,7 @@ No está en 1FN. Sesiones y Posiciones tienen varios valores en la misma celda, 
 
 ### 1FN
 
-armamos una fila por Gran Premio, sesión y piloto. De paso agregamos la temporada, la hora de cada sesión, el estado (si terminó o no) y los puntos, que hoy alguien calcula a mano.
+Armamos una fila por Gran Premio, sesión y piloto. De paso agregamos la temporada, la hora de cada sesión, el estado (si terminó o no) y los puntos, que hoy alguien calcula a mano.
 
 | Gran Premio | Temporada | Fecha | Circuito | País | Sesión | Hora | Piloto | N.º auto | Posición | Estado | Puntos |
 |---|---|---|---|---|---|---|---|---|---|---|---|
@@ -46,15 +46,15 @@ La última es la importante. Los puntos no dependen de quién corrió sino de la
 
 Con la planilla así aparecen las tres anomalías:
 
-- Modificación: si cambia el país de un circuito o el número de un piloto, hay que corregirlo en cientos de filas. si se nos pasa una, quedan datos contradictorios.
+- Modificación: si cambia el país de un circuito o el número de un piloto, hay que corregirlo en cientos de filas. Si se nos pasa una, quedan datos contradictorios.
 - Inserción: no se puede cargar un circuito nuevo hasta que se corra una carrera ahí, ni un piloto antes de su primer resultado.
 - Borrado: si borramos el único Gran Premio que se corrió en un circuito, perdemos el circuito y su país.
 
-y una cuarta que es propia de este caso: si la FIA cambia la tabla de puntos, hay que recalcular a mano todos los resultados de la temporada.
+Y una cuarta que es propia de este caso: si la FIA cambia la tabla de puntos, hay que recalcular a mano todos los resultados de la temporada.
 
 ### 2FN
 
-sacamos lo que depende de una parte de la clave:
+Sacamos lo que depende de una parte de la clave:
 
 - GranPremio (**Gran Premio**, Temporada, Fecha, Circuito, País), por Gran Premio → ...
 - Sesion (**Gran Premio, Sesión**, Hora), por (Gran Premio, Sesión) → Hora
@@ -63,7 +63,7 @@ sacamos lo que depende de una parte de la clave:
 
 ### 3FN
 
-quedan dos dependencias transitivas:
+Quedan dos dependencias transitivas:
 
 - En GranPremio, País depende de Circuito, que no es clave. Sale Circuito (**Circuito**, País) y GranPremio se queda con Circuito como referencia.
 - En Resultado, Puntos depende de (Temporada, Sesión, Posición). La temporada sale del Gran Premio, así que Puntos depende de la posición y no de la clave entera. Sale Puntaje (**Temporada, Sesión, Posición**, Puntos) y Resultado ya no guarda los puntos.
@@ -100,7 +100,7 @@ Separamos:
 - TipoComponente (**Tipo**, Vida útil)
 - LimiteComponente (**Tipo, Temporada**, Máximo)
 
-Las dos quedan en 3FN porque no tienen atributos no clave que dependan entre sí. es el ejemplo más claro de 2FN que tenemos.
+Las dos quedan en 3FN porque no tienen atributos no clave que dependan entre sí. Es el ejemplo más claro de 2FN que tenemos.
 
 
 ## Planilla 3: los gastos
@@ -120,7 +120,7 @@ Dependencias:
 - Identificación fiscal → Proveedor
 - Categoría → ¿Cuenta para el tope?
 
-Hay dos dependencias transitivas: los datos del proveedor dependen del proveedor y "¿Cuenta para el tope?" depende de la categoría. ninguno de los dos es clave de la planilla.
+Hay dos dependencias transitivas: los datos del proveedor dependen del proveedor y "¿Cuenta para el tope?" depende de la categoría. Ninguno de los dos es clave de la planilla.
 
 Las anomalías: si un proveedor cambia de país hay que corregir todos sus gastos, no se puede dar de alta un proveedor sin haberle comprado algo, y si alguien marca "No" en un gasto de Frenos y "Sí" en otro, la planilla no sabe cuál vale.
 
@@ -135,7 +135,7 @@ Las alertas del tope salen del mismo razonamiento. Al principio AlertaTope tení
 
 ## FNBC
 
-la definición que vimos en la clase 13: una relación está en FNBC si para cada dependencia funcional no trivial X → Y, X es una superclave.
+La definición que vimos en la clase 13: una relación está en FNBC si para cada dependencia funcional no trivial X → Y, X es una superclave.
 
 Revisamos las tablas finales que tienen más de una clave candidata, que es donde puede fallar:
 
@@ -153,8 +153,8 @@ El resto de las tablas tiene una sola clave y todo depende de ella, así que 3FN
 
 En la clase vimos que una descomposición de R en R1 y R2 es independiente si y solo si:
 
-1. toda dependencia funcional de R se puede deducir de las dependencias de R1 y R2, y
-2. los atributos comunes de R1 y R2 forman una clave candidata de al menos una de las dos.
+1. Toda dependencia funcional de R se puede deducir de las dependencias de R1 y R2, y
+2. Los atributos comunes de R1 y R2 forman una clave candidata de al menos una de las dos.
 
 La segunda condición es la que asegura que al hacer el JOIN volvemos a tener exactamente los datos de antes. Lo revisamos en cada separación:
 
@@ -180,9 +180,9 @@ Componente guarda `km_acumulados`, aunque se podría calcular sumando los km de 
 
 La hacemos porque el estado de las piezas se consulta todo el tiempo, y porque el cierre de cada Gran Premio decide si retira una pieza según esos km. Sumar todo el historial cada vez no tiene sentido.
 
-el riesgo es que el número guardado no coincida con la suma real. Lo controlamos así:
+El riesgo es que el número guardado no coincida con la suma real. Lo controlamos así:
 
-- solo el procedimiento `usp_cerrar_gp` modifica ese campo, una vez por Gran Premio.
+- Solo el procedimiento `usp_cerrar_gp` modifica ese campo, una vez por Gran Premio.
 - Ningún rol tiene permiso de UPDATE directo sobre Componente.
 - Un Gran Premio cerrado no acepta más usos de piezas (RN15), así que lo que se sumó no cambia después.
 

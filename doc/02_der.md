@@ -2,12 +2,12 @@
 
 El DER está hecho en draw.io: [der/der.drawio](der/der.drawio). Tiene cinco pestañas. La primera es el modelo entero sin atributos, para ver cómo se conecta todo, y las otras cuatro son una por área con todos los atributos.
 
-usamos la notación de Chen que vimos en clase.
+Usamos la notación de Chen que vimos en clase.
 
 ## Cómo se lee
 
 - Rectángulo: entidad. Rectángulo doble: entidad débil.
-- Rombo: relación. rombo doble: relación identificadora (la que le da la identidad a una entidad débil).
+- Rombo: relación. Rombo doble: relación identificadora (la que le da la identidad a una entidad débil).
 - Elipse: atributo. Si está subrayado es el identificador de la entidad. Subrayado punteado es la clave parcial de una entidad débil.
 - Elipse punteada: atributo derivado, o sea que se puede calcular a partir de otros datos.
 - El triángulo es una especialización ("es un").
@@ -15,7 +15,7 @@ usamos la notación de Chen que vimos en clase.
 
 Las cardinalidades van a cada lado del rombo, con 1, N o M. Se leen cruzando: en "GranPremio 1 — tiene — N Sesion" un Gran Premio tiene N sesiones y cada sesión es de 1 Gran Premio. Si los dos lados son muchos se pone N y M.
 
-en "admite" pusimos 2 en vez de N porque un Gran Premio admite como mucho dos inscripciones (los dos autos del equipo).
+En "admite" pusimos 2 en vez de N porque un Gran Premio admite como mucho dos inscripciones (los dos autos del equipo).
 
 
 ## Modelo general
@@ -34,7 +34,7 @@ Temporada se identifica por el año, no le inventamos un id.
 
 Puntaje es débil. Un puntaje solo existe para una temporada y un tipo de sesión, y se identifica por esos dos más la posición (su clave parcial). La tabla de puntos cambia según la temporada y según si es carrera o sprint, por eso depende de las dos.
 
-Resultado es una relación N:M entre Sesion e Inscripcion: en una sesión hay resultados de varios pilotos inscriptos, y un piloto inscripto tiene resultado en varias sesiones del fin de semana. tiene sus propios atributos, posicion y estado (Finalizó, Abandono, Descalificado, No largó). `puntos` está como derivado porque no lo guardamos, sale de cruzar la posición con Puntaje.
+Resultado es una relación N:M entre Sesion e Inscripcion: en una sesión hay resultados de varios pilotos inscriptos, y un piloto inscripto tiene resultado en varias sesiones del fin de semana. Tiene sus propios atributos, posicion y estado (Finalizó, Abandono, Descalificado, No largó). `puntos` está como derivado porque no lo guardamos, sale de cruzar la posición con Puntaje.
 
 ### Personal
 
@@ -42,16 +42,16 @@ Resultado es una relación N:M entre Sesion e Inscripcion: en una sesión hay re
 
 Piloto es una especialización de Empleado. Un piloto es un empleado con un dato más, el número de auto. La marcamos (p,d):
 
-- parcial, porque hay empleados que no son pilotos (ingenieros, mecánicos, administrativos).
-- disjunta, porque solo hay un subtipo y no se puede ser piloto "dos veces".
+- Parcial, porque hay empleados que no son pilotos (ingenieros, mecánicos, administrativos).
+- Disjunta, porque solo hay un subtipo y no se puede ser piloto "dos veces".
 
-AuditoriaContrato es débil, depende de Contrato. Un registro de auditoría no tiene sentido sin el contrato al que le cambiaron el sueldo. su clave parcial es la fecha y hora del cambio. En la tabla igual le pusimos un `id_auditoria` propio, porque dos cambios en el mismo segundo romperían la clave y un id es más simple de manejar.
+AuditoriaContrato es débil, depende de Contrato. Un registro de auditoría no tiene sentido sin el contrato al que le cambiaron el sueldo. Su clave parcial es la fecha y hora del cambio. En la tabla igual le pusimos un `id_auditoria` propio, porque dos cambios en el mismo segundo romperían la clave y un id es más simple de manejar.
 
 ### Técnica
 
 ![DER técnica](der/der_tecnica.png)
 
-Inscripcion es la entidad que más se conecta. Salió de una relación N:M entre Piloto y GranPremio (un piloto corre muchos GP, un GP lo corren dos pilotos), pero además de unir a los dos lleva el chasis, y de ella cuelgan los resultados, el uso de piezas y las penalizaciones. por eso la dibujamos como entidad y no como rombo.
+Inscripcion es la entidad que más se conecta. Salió de una relación N:M entre Piloto y GranPremio (un piloto corre muchos GP, un GP lo corren dos pilotos), pero además de unir a los dos lleva el chasis, y de ella cuelgan los resultados, el uso de piezas y las penalizaciones. Por eso la dibujamos como entidad y no como rombo.
 
 El 2 en "admite" es la regla de que corren dos autos por equipo (RN03).
 
@@ -65,7 +65,7 @@ UsoComponente es N:M entre Componente e Inscripcion. Guarda los km que hizo cada
 
 ![DER finanzas](der/der_finanzas.png)
 
-TopePresupuestario es débil respecto de Temporada. hay un tope por año, y el tope se identifica por el año de su temporada, no tiene identificador propio.
+TopePresupuestario es débil respecto de Temporada. Hay un tope por año, y el tope se identifica por el año de su temporada, no tiene identificador propio.
 
 La relación "compra" entre Gasto y Componente es 1 a 1 y opcional de los dos lados. No todo gasto es una pieza (hay fletes, servicios, etc.) y una pieza puede no tener gasto cargado, por ejemplo si vino de una temporada anterior. Lo que no puede pasar es que una pieza tenga dos gastos de compra (RN17).
 
@@ -103,11 +103,11 @@ En AlertaTope el porcentaje es derivado (gasto acumulado sobre el tope del año)
 | compra | Componente | Gasto | 1:1 |
 | dispara | Gasto | AlertaTope | 1:1 |
 
-en las 1:N la primera entidad es la del lado 1. Casi todas son opcionales del lado de muchos a propósito, así se puede cargar un circuito antes de que tenga Grandes Premios, un puesto antes de contratar a alguien, etc.
+En las 1:N la primera entidad es la del lado 1. Casi todas son opcionales del lado de muchos a propósito, así se puede cargar un circuito antes de que tenga Grandes Premios, un puesto antes de contratar a alguien, etc.
 
 
 
 Hay dos reglas que el DER no alcanza a mostrar y que se controlan en la base:
 
-- que el resultado y la inscripción sean del mismo Gran Premio (la sesión es de un GP y la inscripción también, tienen que coincidir). Lo valida el procedimiento de carga de resultados.
-- que el chasis sea de la misma temporada que el Gran Premio (RN06). lo valida el procedimiento de inscripción.
+- Que el resultado y la inscripción sean del mismo Gran Premio (la sesión es de un GP y la inscripción también, tienen que coincidir). Lo valida el procedimiento de carga de resultados.
+- Que el chasis sea de la misma temporada que el Gran Premio (RN06). Lo valida el procedimiento de inscripción.

@@ -1,10 +1,10 @@
 # Convenciones
 
-las acordamos antes de escribir SQL para que el script final no parezca escrito por cuatro personas distintas. Si alguien necesita cambiar una lo charlamos y se actualiza acá.
+Las acordamos antes de escribir SQL para que el script final no parezca escrito por cuatro personas distintas. Si alguien necesita cambiar una lo charlamos y se actualiza acá.
 
 ## Motor
 
-SQL Server 2019 o posterior. lo pedimos así porque usamos `CREATE OR ALTER` y `DROP ... IF EXISTS`, que no existen en versiones mas viejas.
+SQL Server 2019 o posterior. Lo pedimos así porque usamos `CREATE OR ALTER` y `DROP ... IF EXISTS`, que no existen en versiones mas viejas.
 
 La base se llama `EscuderiaF1`.
 
@@ -23,13 +23,13 @@ La base se llama `EscuderiaF1`.
 | Restricciones | tipo, tabla y qué controla | `CK_GranPremio_fechas`, `UQ_Inscripcion_gp_chasis`, `FK_Sesion_GranPremio` |
 | Índices | `IX_`, o `UX_` si es único | `UX_Resultado_posicion` |
 
-usamos `usp_` y no `sp_` porque SQL Server busca primero en la base `master` los procedimientos que empiezan con `sp_`.
+Usamos `usp_` y no `sp_` porque SQL Server busca primero en la base `master` los procedimientos que empiezan con `sp_`.
 
 Las restricciones siempre llevan nombre, así cuando una falla el mensaje de error dice cuál fue.
 
 Hay tablas cuya clave no es un `id_` inventado. Temporada y TopePresupuestario usan el año (`anio`), y las tablas que resuelven una relación (Puntaje, LimiteComponente, Resultado, UsoComponente) usan una clave compuesta.
 
-las variables dentro de procedimientos y triggers van en minúscula y cortas (`@idgp`, `@cant`, `@tot`). No hace falta que sean perfectas, que se entienda alcanza.
+Las variables dentro de procedimientos y triggers van en minúscula y cortas (`@idgp`, `@cant`, `@tot`). No hace falta que sean perfectas, que se entienda alcanza.
 
 
 
@@ -49,7 +49,7 @@ las variables dentro de procedimientos y triggers van en minúscula y cortas (`@
 
 Los textos fijos van con N adelante (`N'Finalizó'`) para que no se rompan las tildes.
 
-todo es `NOT NULL` salvo que el dato de verdad pueda faltar. los casos estan en el diccionario de datos de cada tabla.
+Todo es `NOT NULL` salvo que el dato de verdad pueda faltar. Los casos estan en el diccionario de datos de cada tabla.
 
 ## Códigos de error
 
@@ -66,10 +66,10 @@ Los mensajes van en castellano y dicen qué pasó, no qué hacer: "El Gran Premi
 
 ## Comentarios
 
-no ponemos comentarios en el código. Qué hace cada objeto y qué regla de negocio cumple (RN13, etc) va en el documento, en la sección de ese objeto.
+No ponemos comentarios en el código. Qué hace cada objeto y qué regla de negocio cumple (RN13, etc) va en el documento, en la sección de ese objeto.
 
 ## Scripts
 
 - Cada script tiene que poder correrse dos veces seguidas sin errores.
-- antes de cada `CREATE VIEW`, `FUNCTION`, `PROCEDURE` o `TRIGGER` va un `GO`, porque tienen que ser lo primero de su lote.
+- Antes de cada `CREATE VIEW`, `FUNCTION`, `PROCEDURE` o `TRIGGER` va un `GO`, porque tienen que ser lo primero de su lote.
 - Las tablas se crean por niveles de dependencia (primero las que no apuntan a ninguna otra), no por área.
