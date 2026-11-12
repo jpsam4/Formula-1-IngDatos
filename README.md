@@ -16,10 +16,10 @@ El modelo sirve para varias temporadas. Los datos de prueba son de la 2026.
 
 | Integrante | Área |
 |---|---|
-| a definir | Deportiva |
-| a definir | Personal |
-| a definir | Técnica |
-| a definir | Finanzas y seguridad |
+| Joaquin Tiago Castellano Acuna | a definir |
+| Juan Zeljkovich | a definir |
+| Juan Pedro Sama | a definir |
+| Santiago Ohoka | a definir |
 
 Integrador (junta los scripts y se fija que corran en orden): a definir.
 
