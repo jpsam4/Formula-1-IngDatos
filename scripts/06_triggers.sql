@@ -55,20 +55,11 @@ begin
         return
     end
 
-    if exists (select 1 from inserted i
-        where i.condicion is not null and i.id_empleado not in (select id_empleado from Piloto))
+    if exists (select 1 from inserted i left join Piloto p on p.id_empleado = i.id_empleado
+        where (p.id_empleado is null and i.condicion is not null) or (p.id_empleado is not null and i.condicion is null))
     begin
         rollback transaction
-        raiserror('solo el contrato de un piloto dice si es titular o reserva', 16, 1)
-        return
-    end
-
-    if exists (select 1 from inserted i
-        inner join Piloto p on p.id_empleado = i.id_empleado
-        where i.condicion is null)
-    begin
-        rollback transaction
-        raiserror('el contrato de un piloto tiene que decir si es titular o reserva', 16, 1)
+        raiserror('titular o reserva va en los contratos de pilotos y solo en esos', 16, 1)
         return
     end
 
