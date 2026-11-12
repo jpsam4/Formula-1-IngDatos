@@ -16,12 +16,12 @@ El modelo sirve para varias temporadas. Los datos de prueba son de la 2026.
 
 | Integrante | Área |
 |---|---|
-| Joaquin Tiago Castellano Acuna | a definir |
-| Juan Zeljkovich | a definir |
-| Juan Pedro Sama | a definir |
-| Santiago Ohoka | a definir |
+| Joaquin Tiago Castellano Acuna | Técnica |
+| Juan Zeljkovich | Finanzas y seguridad |
+| Juan Pedro Sama | Deportiva |
+| Santiago Ohoka | Personal |
 
-Integrador (junta los scripts y se fija que corran en orden): a definir.
+Integrador (junta los scripts y se fija que corran en orden): Joaquin Tiago Castellano Acuna.
 
 ## Cómo está organizado
 
@@ -32,7 +32,7 @@ doc/tablas/ el modelo de tablas en draw.io y su imagen
 scripts/    los scripts SQL, numerados en el orden en que se ejecutan
 ```
 
-El documento para entregar es [doc/TP_integrador_RedBull.docx](doc/TP_integrador_RedBull.docx). Tiene todas las secciones en el orden del enunciado, con carátula e índice. Faltan los legajos y quién hizo cada área (están marcados en amarillo).
+El documento para entregar es [doc/TP_integrador_RedBull.pdf](doc/TP_integrador_RedBull.pdf). Tiene todas las secciones en el orden del enunciado, con carátula e índice.
 
 ## Cómo armar la base
 
