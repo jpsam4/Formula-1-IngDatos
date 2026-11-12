@@ -60,31 +60,21 @@ Para cuidar la originalidad del trabajo:
 
 ## 5. Consultas a la cátedra
 
-**Estado: pendiente de enviar.** Se envían por escrito (mail o campus) y la respuesta se copia en esta sección.
+### Entrega por GitHub
 
-### Borrador
+**Lo hablamos con el profesor: no es obligatorio entregar a través de GitHub.**
 
-> **Asunto:** TP Integrador F1 – Consultas sobre la entrega
->
-> Buenas, profesor/a. Le escribimos por el TP Integrador para hacerle dos consultas:
->
-> 1. **GitHub:** el punto 3 del enunciado lo presenta como opcional, pero el punto 24 lo pone como condición de aprobación. ¿Es obligatorio entregar a través de GitHub? (Nosotros pensamos usarlo de todas formas.)
-> 2. **Formato de entrega:** ¿los scripts van en un único archivo `.sql` o pueden ir en varios (estructura, datos, funciones, vistas, procedimientos, triggers, seguridad y pruebas, más uno que los concatene)? ¿En qué formato se entrega el documento (PDF, Word u otro)?
->
-> Muchas gracias. Saludos.
+Decisión del equipo: **el trabajo no se entrega por GitHub.** Este repositorio se usa solo para organizarnos y llevar el historial del trabajo.
 
-### Respuestas
+### Formato de entrega
 
-| Consulta | Fecha | Medio | Respuesta |
-|---|---|---|---|
-| 1. ¿Se puede entregar sin GitHub? | | | |
-| 2. Formato de entrega (scripts y documento) | | | |
+**Pendiente de confirmar:** si los scripts van en un único archivo `.sql` o en varios, y en qué formato se entrega el documento.
 
 ## 6. Acuerdos iniciales
 
 1. **Escudería real:** Red Bull Racing, temporada 2026, con la base preparada para varias temporadas.
 2. **Motor:** Microsoft SQL Server 2025.
-3. **GitHub se usa igual**, más allá de la respuesta de la cátedra, porque el enunciado lo pone como condición de aprobación. Se trabaja en este repositorio.
+3. **GitHub para organizarnos, no para entregar:** el profesor confirmó que no es obligatorio entregar por GitHub, así que la entrega no se hace por ahí. Este repositorio se usa para coordinar el trabajo del equipo y llevar el historial de versiones.
 4. **Organización del trabajo:** las definiciones, el alcance y el DER se hacen entre todos; las tablas, los datos de prueba y los objetos, cada responsable en su área y en paralelo; la integración, las pruebas y el documento final, de nuevo entre todos. Como en la defensa le pueden preguntar a cualquiera por cualquier parte, todos participan de las partes comunes.
 5. **Modelo de partida:** 25 tablas repartidas en las cuatro áreas. Se revisa entre todos y se puede ajustar al armar el DER.
 6. **Convenciones:** las de [convenciones.md](convenciones.md). Una vez confirmadas, no se cambian sin acordarlo entre todos.
