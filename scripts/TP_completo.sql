@@ -8,6 +8,7 @@ end
 
 create database EscuderiaF1
 go
+
 use EscuderiaF1
 
 
@@ -624,8 +625,8 @@ insert into UsoComponente (id_componente, id_inscripcion, km_recorridos) values
 
 insert into Penalizacion (id_inscripcion, id_componente, puestos_grilla, motivo, fecha) values
 (11, 8, 10, '4 MGU-K usados en la temporada y el limite es 3', '2026-06-05 13:00')
-
 go
+
 create or alter function dbo.fn_puntos_piloto (@idpiloto int, @anio smallint)
 returns int
 as
@@ -646,6 +647,7 @@ begin
     return isnull(@pts, 0)
 end
 go
+
 create or alter function dbo.fn_contrato_vigente (@idemp int, @fecha date)
 returns int
 as
@@ -661,6 +663,7 @@ begin
     return @idc
 end
 go
+
 create or alter function dbo.fn_km_restantes (@idcomp int)
 returns decimal(10,2)
 as
@@ -678,6 +681,7 @@ begin
     return @resto
 end
 go
+
 create or alter function dbo.fn_gasto_computable (@anio smallint)
 returns decimal(14,2)
 as
@@ -691,6 +695,7 @@ begin
     )
 end
 go
+
 create or alter function dbo.fn_piezas_piloto (@idpiloto int, @anio smallint)
 returns table
 as
@@ -713,8 +718,8 @@ return (
     ) x on x.id_tipo = l.id_tipo
     where l.anio = @anio
 )
-
 go
+
 create or alter view vw_puntos_equipo_por_gp
 as
 select x.anio, x.ronda, x.gran_premio, x.puntos,
@@ -730,6 +735,7 @@ from (
     group by g.anio, g.ronda, g.nombre
 ) x
 go
+
 create or alter view vw_nomina
 as
 select e.id_empleado, e.apellido, e.nombre,
@@ -743,6 +749,7 @@ inner join Puesto p on p.id_puesto = e.id_puesto
 inner join Pais pa on pa.id_pais = e.id_pais
 inner join Contrato c on c.id_contrato = dbo.fn_contrato_vigente(e.id_empleado, cast(getdate() as date))
 go
+
 create or alter view vw_estado_piezas
 as
 select c.id_componente, c.numero_serie, t.nombre as tipo, c.estado,
@@ -758,6 +765,7 @@ select c.id_componente, c.numero_serie, t.nombre as tipo, c.estado,
 from Componente c
 inner join TipoComponente t on t.id_tipo = c.id_tipo
 go
+
 create or alter view vw_situacion_tope
 as
 select t.anio,
@@ -771,8 +779,8 @@ select t.anio,
         inner join Gasto g on g.id_gasto = a.id_gasto
         where year(g.fecha) = t.anio) as alertas
 from TopePresupuestario t
-
 go
+
 create or alter procedure usp_cargar_resultado
     @idsesion int,
     @idinsc int,
@@ -820,6 +828,7 @@ begin
     end catch
 end
 go
+
 create or alter procedure usp_inscribir_piloto
     @idgp int,
     @idpiloto int,
@@ -875,6 +884,7 @@ begin
     end catch
 end
 go
+
 create or alter procedure usp_retirar_componente
     @idcomp int,
     @danada bit = 0
@@ -906,6 +916,7 @@ begin
     return 0
 end
 go
+
 create or alter procedure usp_cerrar_gp
     @idgp int
 as
@@ -978,6 +989,7 @@ begin
     end catch
 end
 go
+
 create or alter procedure usp_registrar_compra
     @idtipo int,
     @serie nvarchar(30),
@@ -1030,6 +1042,7 @@ begin
     end catch
 end
 go
+
 create or alter procedure usp_registrar_gasto
     @fecha date,
     @monto decimal(14,2),
@@ -1069,8 +1082,8 @@ begin
         return 1
     end catch
 end
-
 go
+
 create or alter trigger tr_Sesion_validar
 on Sesion
 after insert, update
@@ -1104,6 +1117,7 @@ begin
     end
 end
 go
+
 create or alter trigger tr_Contrato
 on Contrato
 after insert, update
@@ -1150,6 +1164,7 @@ begin
     where i.sueldo_mensual_usd <> d.sueldo_mensual_usd
 end
 go
+
 create or alter trigger tr_UsoComponente
 on UsoComponente
 after insert
@@ -1178,49 +1193,46 @@ begin
         return
     end
 
-    ;with nuevas as (
-        select i.id_componente, min(i.id_inscripcion) as id_inscripcion
-        from inserted i
-        where not exists (select 1
-                          from UsoComponente u
-                          where u.id_componente = i.id_componente
-                            and u.id_inscripcion not in (select x.id_inscripcion from inserted x
-                                                         where x.id_componente = u.id_componente))
-        group by i.id_componente
-    ),
-    datos as (
-        select n.id_componente, n.id_inscripcion, ins.id_piloto, g.anio, c.id_tipo,
-               t.nombre as tipo, l.cantidad_max,
-               row_number() over (partition by ins.id_piloto, g.anio, c.id_tipo
-                                  order by n.id_inscripcion, n.id_componente) as orden
-        from nuevas n
-        inner join Inscripcion ins on ins.id_inscripcion = n.id_inscripcion
-        inner join GranPremio g on g.id_gp = ins.id_gp
-        inner join Componente c on c.id_componente = n.id_componente
-        inner join TipoComponente t on t.id_tipo = c.id_tipo
-        inner join LimiteComponente l on l.anio = g.anio and l.id_tipo = c.id_tipo
-    ),
-    cuenta as (
-        select d.*,
+    declare @nuevas table (id_componente int, id_inscripcion int)
+
+    insert into @nuevas (id_componente, id_inscripcion)
+    select i.id_componente, min(i.id_inscripcion)
+    from inserted i
+    where not exists (select 1
+                      from UsoComponente u
+                      where u.id_componente = i.id_componente
+                        and u.id_inscripcion not in (select x.id_inscripcion from inserted x
+                                                     where x.id_componente = u.id_componente))
+    group by i.id_componente
+
+    insert into Penalizacion (id_inscripcion, id_componente, puestos_grilla, motivo)
+    select x.id_inscripcion, x.id_componente,
+           case when x.numero = x.cantidad_max + 1 then 10 else 5 end,
+           cast(x.numero as varchar(5)) + ' ' + x.tipo + ' usados en la temporada y el limite es ' + cast(x.cantidad_max as varchar(5))
+    from (
+        select n.id_componente, n.id_inscripcion, t.nombre as tipo, l.cantidad_max,
                (select count(distinct u.id_componente)
                 from UsoComponente u
                 inner join Inscripcion i2 on i2.id_inscripcion = u.id_inscripcion
                 inner join GranPremio g2 on g2.id_gp = i2.id_gp
                 inner join Componente c2 on c2.id_componente = u.id_componente
-                where i2.id_piloto = d.id_piloto
-                  and g2.anio = d.anio
-                  and c2.id_tipo = d.id_tipo
-                  and u.id_componente not in (select id_componente from nuevas)) + d.orden as numero
-        from datos d
-    )
-    insert into Penalizacion (id_inscripcion, id_componente, puestos_grilla, motivo)
-    select id_inscripcion, id_componente,
-           case when numero = cantidad_max + 1 then 10 else 5 end,
-           cast(numero as varchar(5)) + ' ' + tipo + ' usados en la temporada y el limite es ' + cast(cantidad_max as varchar(5))
-    from cuenta
-    where numero > cantidad_max
+                where i2.id_piloto = ins.id_piloto
+                  and g2.anio = g.anio
+                  and c2.id_tipo = c.id_tipo
+                  and u.id_componente not in (select id_componente from @nuevas))
+               + row_number() over (partition by ins.id_piloto, g.anio, c.id_tipo
+                                    order by n.id_inscripcion, n.id_componente) as numero
+        from @nuevas n
+        inner join Inscripcion ins on ins.id_inscripcion = n.id_inscripcion
+        inner join GranPremio g on g.id_gp = ins.id_gp
+        inner join Componente c on c.id_componente = n.id_componente
+        inner join TipoComponente t on t.id_tipo = c.id_tipo
+        inner join LimiteComponente l on l.anio = g.anio and l.id_tipo = c.id_tipo
+    ) x
+    where x.numero > x.cantidad_max
 end
 go
+
 create or alter trigger tr_Gasto_tope
 on Gasto
 after insert, update
@@ -1255,7 +1267,8 @@ begin
                    t.monto_usd * t.umbral_alerta_pct / 100 as limite,
                    dbo.fn_gasto_computable(t.anio)
                      - sum(i.monto_usd) over (partition by t.anio)
-                     + sum(i.monto_usd) over (partition by t.anio order by i.id_gasto rows unbounded preceding) as acumulado
+                     + sum(i.monto_usd) over (partition by t.anio order by i.id_gasto
+                                         rows between unbounded preceding and current row) as acumulado
             from inserted i
             inner join CategoriaGasto c on c.id_categoria = i.id_categoria
             inner join TopePresupuestario t on t.anio = year(i.fecha)
@@ -1265,8 +1278,8 @@ begin
           and x.acumulado - x.monto_usd < x.limite
     end
 end
-
 go
+
 use master
 
 if not exists (select 1 from sys.server_principals where name = 'login_director')

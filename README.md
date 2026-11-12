@@ -28,6 +28,7 @@ Integrador (junta los scripts y se fija que corran en orden): a definir.
 ```
 doc/        el documento del TP, seccion por seccion
 doc/der/    el DER en draw.io y sus imagenes
+doc/tablas/ el modelo de tablas en draw.io y su imagen
 scripts/    los scripts SQL, numerados en el orden en que se ejecutan
 ```
 
@@ -38,11 +39,13 @@ Avance del documento:
 | Descripción, alcance y reglas de negocio | [doc/01_alcance.md](doc/01_alcance.md) | listo para revisar |
 | DER | [doc/02_der.md](doc/02_der.md) | listo para revisar |
 | Normalización | [doc/03_normalizacion.md](doc/03_normalizacion.md) | listo para revisar |
-| Modelo de tablas, diccionario de datos | | pendiente |
-| Consultas, vistas, procedimientos, triggers, cursor, funciones | | pendiente |
-| Manejo de errores, seguridad, conclusiones | | pendiente |
+| Modelo de tablas y diccionario de datos | [doc/04_tablas.md](doc/04_tablas.md) | listo para revisar |
+| Consultas y subconsultas | [doc/05_consultas.md](doc/05_consultas.md) | listo para revisar |
+| Vistas, procedimientos, triggers, cursor y funciones | [doc/06_objetos.md](doc/06_objetos.md) | listo para revisar |
+| Manejo de errores, seguridad y centralización | | pendiente |
+| Conclusiones | | pendiente |
 
-Las convenciones de nombres, tipos y códigos de error estan en [doc/convenciones.md](doc/convenciones.md). Leerlas antes de escribir la primera tabla porfa.
+Las convenciones de nombres, tipos y manejo de errores estan en [doc/convenciones.md](doc/convenciones.md). Leerlas antes de escribir la primera tabla porfa.
 
 ## Cómo trabajamos con Git
 
@@ -54,15 +57,6 @@ Las convenciones de nombres, tipos y códigos de error estan en [doc/convencione
 
 ## Cómo armar la base
 
-Todavía no hay scripts. Cuando estén, se ejecutan en este orden sobre SQL Server 2019 o posterior:
+En SQL Server 2019 o posterior, abrir `scripts/TP_completo.sql` en SSMS y apretar F5. Arma la base `EscuderiaF1` desde cero, con datos, objetos y seguridad, y se puede correr de nuevo cuando haga falta.
 
-1. `scripts/01_estructura.sql`
-2. `scripts/02_datos.sql`
-3. `scripts/03_funciones.sql`
-4. `scripts/04_vistas.sql`
-5. `scripts/05_procedimientos.sql`
-6. `scripts/06_triggers.sql`
-7. `scripts/07_seguridad.sql`
-8. `scripts/99_pruebas.sql` (opcional, muestra cada objeto funcionando y cada error saltando)
-
-También va a haber un `TP_completo.sql` con los scripts 01 a 07 pegados en orden, para armar todo de una.
+Después se pueden correr `scripts/08_consultas.sql` (las consultas del documento) y `scripts/99_pruebas.sql` (prueba cada regla y cada error). El detalle de cada script está en [scripts/README.md](scripts/README.md).

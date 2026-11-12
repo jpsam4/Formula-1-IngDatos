@@ -74,9 +74,9 @@ Finanzas:
 
 ## Reglas de negocio
 
-Las reglas están numeradas porque cada objeto de la base dice qué regla implementa. La ultima columna es el mecanismo que pensamos usar, se confirma cuando se programe cada objeto.
+Las reglas están numeradas porque cada objeto de la base dice qué regla implementa. La ultima columna es la parte de la base que la hace cumplir.
 
-| Regla | Qué dice | Mecanismo previsto |
+| Regla | Qué dice | Mecanismo |
 |---|---|---|
 | RN01 | Las sesiones sprint solo existen en Grandes Premios con formato sprint | Trigger de Sesion |
 | RN02 | La fecha de una sesión está dentro del fin de semana de su Gran Premio | Trigger de Sesion |
