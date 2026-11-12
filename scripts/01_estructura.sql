@@ -1,10 +1,7 @@
 ﻿use master
 
-if db_id('EscuderiaF1') is not null
-begin
-    alter database EscuderiaF1 set single_user with rollback immediate
+if exists (select * from sysdatabases where name = 'EscuderiaF1')
     drop database EscuderiaF1
-end
 
 create database EscuderiaF1
 go
@@ -26,10 +23,10 @@ create table Temporada (
 )
 
 create table TipoSesion (
-    id_tipo_sesion  int identity(1,1) not null,
-    nombre          nvarchar(40) not null,
-    es_sprint       bit not null constraint DF_TipoSesion_sprint default 0,
-    otorga_puntos   bit not null constraint DF_TipoSesion_puntos default 0,
+    id_tipo_sesion int identity(1,1) not null,
+    nombre nvarchar(40) not null,
+    es_sprint bit not null constraint DF_TipoSesion_sprint default 0,
+    otorga_puntos bit not null constraint DF_TipoSesion_puntos default 0,
     constraint PK_TipoSesion primary key (id_tipo_sesion),
     constraint UQ_TipoSesion_nombre unique (nombre)
 )
@@ -42,9 +39,9 @@ create table Puesto (
 )
 
 create table TipoComponente (
-    id_tipo       int identity(1,1) not null,
-    nombre        nvarchar(40) not null,
-    vida_util_km  decimal(10,2) not null,
+    id_tipo int identity(1,1) not null,
+    nombre nvarchar(40) not null,
+    vida_util_km decimal(10,2) not null,
     constraint PK_TipoComponente primary key (id_tipo),
     constraint UQ_TipoComponente_nombre unique (nombre),
     constraint CK_TipoComponente_vida check (vida_util_km > 0)
@@ -59,11 +56,11 @@ create table CategoriaGasto (
 
 
 create table Circuito (
-    id_circuito  int identity(1,1) not null,
-    nombre       nvarchar(80) not null,
-    ciudad       nvarchar(60) not null,
-    id_pais      int not null,
-    longitud_km  decimal(5,3) not null,
+    id_circuito int identity(1,1) not null,
+    nombre nvarchar(80) not null,
+    ciudad nvarchar(60) not null,
+    id_pais int not null,
+    longitud_km decimal(5,3) not null,
     constraint PK_Circuito primary key (id_circuito),
     constraint UQ_Circuito_nombre unique (nombre),
     constraint FK_Circuito_Pais
@@ -84,14 +81,14 @@ alter table Puntaje add
     constraint FK_Puntaje_TipoSesion foreign key (id_tipo_sesion) references TipoSesion (id_tipo_sesion)
 
 create table Empleado (
-    id_empleado       int identity(1,1) not null,
-    nombre            nvarchar(60) not null,
-    apellido          nvarchar(60) not null,
-    documento         nvarchar(20) not null,
-    fecha_nacimiento  date not null,
-    email             nvarchar(120) not null,
-    id_pais           int not null,
-    id_puesto         int not null,
+    id_empleado int identity(1,1) not null,
+    nombre nvarchar(60) not null,
+    apellido nvarchar(60) not null,
+    documento nvarchar(20) not null,
+    fecha_nacimiento date not null,
+    email nvarchar(120) not null,
+    id_pais int not null,
+    id_puesto int not null,
     constraint PK_Empleado primary key (id_empleado),
     constraint UQ_Empleado_documento unique (documento),
     constraint UQ_Empleado_email unique (email),
@@ -122,11 +119,11 @@ create table LimiteComponente (
 )
 
 create table Componente (
-    id_componente   int identity(1,1) not null,
-    id_tipo         int not null,
-    numero_serie    nvarchar(30) not null,
-    km_acumulados   decimal(10,2) not null constraint DF_Componente_km default 0,
-    estado          nvarchar(10) not null constraint DF_Componente_estado default 'Nuevo',
+    id_componente int identity(1,1) not null,
+    id_tipo int not null,
+    numero_serie nvarchar(30) not null,
+    km_acumulados decimal(10,2) not null constraint DF_Componente_km default 0,
+    estado nvarchar(10) not null constraint DF_Componente_estado default 'Nuevo',
     constraint PK_Componente primary key (id_componente),
     constraint UQ_Componente_serie unique (numero_serie),
     constraint FK_Componente_Tipo foreign key (id_tipo) references TipoComponente (id_tipo),
@@ -155,15 +152,15 @@ create table TopePresupuestario (
 
 
 create table GranPremio (
-    id_gp         int identity(1,1) not null,
-    anio          smallint not null,
-    ronda         tinyint not null,
-    id_circuito   int not null,
-    nombre        nvarchar(80) not null,
-    fecha_inicio  date not null,
-    fecha_fin     date not null,
-    es_sprint     bit not null constraint DF_GranPremio_sprint default 0,
-    cerrado       bit not null constraint DF_GranPremio_cerrado default 0,
+    id_gp int identity(1,1) not null,
+    anio smallint not null,
+    ronda tinyint not null,
+    id_circuito int not null,
+    nombre nvarchar(80) not null,
+    fecha_inicio date not null,
+    fecha_fin date not null,
+    es_sprint bit not null constraint DF_GranPremio_sprint default 0,
+    cerrado bit not null constraint DF_GranPremio_cerrado default 0,
     constraint PK_GranPremio primary key (id_gp),
     constraint FK_GranPremio_Temporada foreign key (anio) references Temporada (anio),
     constraint FK_GranPremio_Circuito foreign key (id_circuito) references Circuito (id_circuito),
@@ -201,13 +198,13 @@ create table Contrato (
 )
 
 create table Gasto (
-    id_gasto       int identity(1,1) not null,
-    fecha          date not null,
-    monto_usd      decimal(14,2) not null,
-    descripcion    nvarchar(200) not null,
-    id_categoria   int not null,
-    id_proveedor   int not null,
-    id_componente  int null,
+    id_gasto int identity(1,1) not null,
+    fecha date not null,
+    monto_usd decimal(14,2) not null,
+    descripcion nvarchar(200) not null,
+    id_categoria int not null,
+    id_proveedor int not null,
+    id_componente int null,
     constraint PK_Gasto primary key (id_gasto),
     constraint CK_Gasto_monto check (monto_usd > 0)
 )
@@ -215,10 +212,6 @@ create table Gasto (
 alter table Gasto add constraint FK_Gasto_Categoria foreign key (id_categoria) references CategoriaGasto (id_categoria)
 alter table Gasto add constraint FK_Gasto_Proveedor foreign key (id_proveedor) references Proveedor (id_proveedor)
 alter table Gasto add constraint FK_Gasto_Componente foreign key (id_componente) references Componente (id_componente)
-
-create unique index UX_Gasto_componente
-    on Gasto (id_componente)
-    where id_componente is not null
 
 
 
@@ -234,10 +227,10 @@ create table Sesion (
 )
 
 create table Inscripcion (
-    id_inscripcion  int identity(1,1) not null,
-    id_gp           int not null,
-    id_piloto       int not null,
-    id_chasis       int not null,
+    id_inscripcion int identity(1,1) not null,
+    id_gp int not null,
+    id_piloto int not null,
+    id_chasis int not null,
     constraint PK_Inscripcion primary key (id_inscripcion),
     constraint FK_Inscripcion_GranPremio foreign key (id_gp) references GranPremio (id_gp),
     constraint FK_Inscripcion_Piloto foreign key (id_piloto) references Piloto (id_empleado),
@@ -252,14 +245,14 @@ create table AuditoriaContrato (
     sueldo_anterior decimal(14,2) not null,
     sueldo_nuevo decimal(14,2) not null,
     fecha datetime2(0) not null constraint DF_Auditoria_fecha default getdate(),
-    usuario nvarchar(128) not null constraint DF_Auditoria_usuario default suser_sname()
+    usuario nvarchar(128) not null constraint DF_Auditoria_usuario default system_user
 )
 
 create table AlertaTope (
-    id_alerta            int identity(1,1) not null,
-    id_gasto             int not null,
-    fecha                datetime2(0) not null constraint DF_AlertaTope_fecha default getdate(),
-    gasto_acumulado_usd  decimal(14,2) not null,
+    id_alerta int identity(1,1) not null,
+    id_gasto int not null,
+    fecha datetime2(0) not null constraint DF_AlertaTope_fecha default getdate(),
+    gasto_acumulado_usd decimal(14,2) not null,
     constraint PK_AlertaTope primary key (id_alerta),
     constraint FK_AlertaTope_Gasto foreign key (id_gasto) references Gasto (id_gasto),
     constraint UQ_AlertaTope_gasto unique (id_gasto)
@@ -268,10 +261,10 @@ create table AlertaTope (
 
 
 create table Resultado (
-    id_sesion       int not null,
-    id_inscripcion  int not null,
-    posicion        tinyint null,
-    estado          nvarchar(15) not null,
+    id_sesion int not null,
+    id_inscripcion int not null,
+    posicion tinyint null,
+    estado nvarchar(15) not null,
     constraint PK_Resultado primary key (id_sesion, id_inscripcion),
     constraint FK_Resultado_Sesion foreign key (id_sesion) references Sesion (id_sesion),
     constraint FK_Resultado_Inscripcion foreign key (id_inscripcion) references Inscripcion (id_inscripcion),
@@ -283,8 +276,6 @@ create table Resultado (
     )
 )
 
-create unique index UX_Resultado_posicion on Resultado (id_sesion, posicion) where posicion is not null
-
 create table UsoComponente (
     id_componente int not null,
     id_inscripcion int not null,
@@ -295,12 +286,12 @@ create table UsoComponente (
 )
 
 create table Penalizacion (
-    id_penalizacion  int identity(1,1) not null,
-    id_inscripcion   int not null,
-    id_componente    int not null,
-    puestos_grilla   tinyint not null,
-    motivo           nvarchar(200) not null,
-    fecha            datetime2(0) not null constraint DF_Penalizacion_fecha default getdate(),
+    id_penalizacion int identity(1,1) not null,
+    id_inscripcion int not null,
+    id_componente int not null,
+    puestos_grilla tinyint not null,
+    motivo nvarchar(200) not null,
+    fecha datetime2(0) not null constraint DF_Penalizacion_fecha default getdate(),
     constraint PK_Penalizacion primary key (id_penalizacion),
     constraint FK_Penalizacion_Inscripcion foreign key (id_inscripcion) references Inscripcion (id_inscripcion),
     constraint FK_Penalizacion_Componente foreign key (id_componente) references Componente (id_componente),
