@@ -87,23 +87,23 @@ insert into Puntaje (anio, id_tipo_sesion, posicion, puntos) values
 
 set identity_insert Empleado on
 insert into Empleado (id_empleado, nombre, apellido, documento, fecha_nacimiento, email, id_pais, id_puesto) values
-(1, 'Max', 'Verstappen', 'NLD-PX4471902', '1997-09-30', 'max.verstappen@redbullracing.com', 9, 1),
-(2, 'Isack', 'Hadjar', 'FRA-19FR83321', '2004-09-28', 'isack.hadjar@redbullracing.com', 10, 1),
-(3, 'Yuki', 'Tsunoda', 'JPN-TR8812045', '2000-05-11', 'yuki.tsunoda@redbullracing.com', 4, 1),
-(4, 'Santiago', 'Ferraro', 'ARG-46118203', '2006-02-14', 'santiago.ferraro@redbullracing.com', 1, 1),
-(5, 'Marc', 'Lenoir', 'FRA-14GH20551', '1976-11-02', 'marc.lenoir@redbullracing.com', 10, 2),
-(6, 'Hannah', 'Whitcombe', 'GBR-533820147', '1983-04-19', 'hannah.whitcombe@redbullracing.com', 11, 3),
-(7, 'Tomas', 'Ibarra', 'ARG-33456781', '1988-07-23', 'tomas.ibarra@redbullracing.com', 1, 5),
-(8, 'Oliver', 'Granger', 'GBR-541093328', '1985-01-30', 'oliver.granger@redbullracing.com', 11, 4),
-(9, 'Kenji', 'Morita', 'JPN-TK5520913', '1990-10-08', 'kenji.morita@redbullracing.com', 4, 6),
-(10, 'Stefan', 'Brandt', 'DEU-C01X88412', '1979-03-15', 'stefan.brandt@redbullracing.com', 13, 7),
-(11, 'Luca', 'Bernardi', 'ITA-YA7781203', '1994-12-01', 'luca.bernardi@redbullracing.com', 12, 8),
-(12, 'Sam', 'Fletcher', 'GBR-560211874', '1997-06-11', 'sam.fletcher@redbullracing.com', 11, 8),
-(13, 'Pieter', 'de Vries', 'NLD-NW3390218', '1991-08-27', 'pieter.devries@redbullracing.com', 9, 8),
-(14, 'Valentina', 'Ruiz', 'ESP-PAF661203', '1996-02-05', 'valentina.ruiz@redbullracing.com', 8, 9),
-(15, 'Claire', 'Dubois', 'FRA-12KD77310', '1987-05-21', 'claire.dubois@redbullracing.com', 10, 10),
-(16, 'Emma', 'Hartley', 'GBR-548870021', '1992-09-09', 'emma.hartley@redbullracing.com', 11, 11),
-(17, 'Julia', 'Steiner', 'AUT-P8812337', '1999-01-17', 'julia.steiner@redbullracing.com', 14, 12)
+(1, 'Max', 'Verstappen', '38455120', '1997-09-30', 'max.verstappen@redbullracing.com', 9, 1),
+(2, 'Isack', 'Hadjar', '45210877', '2004-09-28', 'isack.hadjar@redbullracing.com', 10, 1),
+(3, 'Yuki', 'Tsunoda', '41530296', '2000-05-11', 'yuki.tsunoda@redbullracing.com', 4, 1),
+(4, 'Santiago', 'Ferraro', '46118203', '2006-02-14', 'santiago.ferraro@redbullracing.com', 1, 1),
+(5, 'Mark', 'Wilson', '23871540', '1976-11-02', 'mark.wilson@redbullracing.com', 11, 2),
+(6, 'Laura', 'Bennett', '30447812', '1983-04-19', 'laura.bennett@redbullracing.com', 11, 3),
+(7, 'Tomas', 'Ibarra', '33456781', '1988-07-23', 'tomas.ibarra@redbullracing.com', 1, 5),
+(8, 'Ryan', 'Cooper', '31209933', '1985-01-30', 'ryan.cooper@redbullracing.com', 11, 4),
+(9, 'Daniel', 'Brown', '35118274', '1990-10-08', 'daniel.brown@redbullracing.com', 11, 6),
+(10, 'Paul', 'Harris', '26654091', '1979-03-15', 'paul.harris@redbullracing.com', 11, 7),
+(11, 'Lucas', 'Romero', '38992416', '1994-12-01', 'lucas.romero@redbullracing.com', 1, 8),
+(12, 'Jack', 'Taylor', '40731158', '1997-06-11', 'jack.taylor@redbullracing.com', 11, 8),
+(13, 'Ben', 'Walker', '34560127', '1991-08-27', 'ben.walker@redbullracing.com', 11, 8),
+(14, 'Sofia', 'Martinez', '39874401', '1996-02-05', 'sofia.martinez@redbullracing.com', 8, 9),
+(15, 'Emily', 'Turner', '32015586', '1987-05-21', 'emily.turner@redbullracing.com', 11, 10),
+(16, 'Sarah', 'Hughes', '36702219', '1992-09-09', 'sarah.hughes@redbullracing.com', 11, 11),
+(17, 'Julia', 'Mendez', '42183370', '1999-01-17', 'julia.mendez@redbullracing.com', 1, 12)
 set identity_insert Empleado off
 
 set identity_insert Chasis on
@@ -146,15 +146,15 @@ set identity_insert Componente off
 
 set identity_insert Proveedor on
 insert into Proveedor (id_proveedor, razon_social, identificacion_fiscal, id_pais) values
-(1, 'Tirreno Frenos S.p.A.', 'IT01987650214', 12),
-(2, 'Milton Composites Ltd', 'GB284113790', 11),
-(3, 'Logistica Austral S.A.', 'AR30712345679', 1),
-(4, 'Kanto Precision Electronics KK', 'JP7010401092', 4),
-(5, 'Bavaria Antriebstechnik GmbH', 'DE298765431', 13),
-(6, 'Northfield Wind Tunnel Ltd', 'GB301556782', 11),
-(7, 'Steirische Events GmbH', 'ATU71234567', 14),
-(8, 'Iberia Viajes Corporativos S.L.', 'ESB86543210', 8),
-(9, 'Hydra Fluidos S.A.S.', 'FR40512339871', 10)
+(1, 'Brembo', 'IT001', 12),
+(2, 'Red Bull Advanced Technologies', 'GB002', 11),
+(3, 'DHL', 'DE003', 13),
+(4, 'Ford', 'US004', 5),
+(5, 'Red Bull Powertrains', 'GB005', 11),
+(6, 'Toyota Gazoo Racing Europe', 'DE006', 13),
+(7, 'Do & Co', 'AT007', 14),
+(8, 'Iberia', 'ES008', 8),
+(9, 'Mobil 1', 'US009', 5)
 set identity_insert Proveedor off
 
 insert into TopePresupuestario (anio, monto_usd, umbral_alerta_pct) values

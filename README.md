@@ -26,28 +26,13 @@ Integrador (junta los scripts y se fija que corran en orden): a definir.
 ## Cómo está organizado el repo
 
 ```
-doc/        el documento del TP, seccion por seccion
+doc/        el documento del TP
 doc/der/    el DER en draw.io y sus imagenes
 doc/tablas/ el modelo de tablas en draw.io y su imagen
 scripts/    los scripts SQL, numerados en el orden en que se ejecutan
 ```
 
-Avance del documento:
-
-| Sección | Archivo | Estado |
-|---|---|---|
-| Descripción, alcance y reglas de negocio | [doc/01_alcance.md](doc/01_alcance.md) | listo para revisar |
-| DER | [doc/02_der.md](doc/02_der.md) | listo para revisar |
-| Normalización | [doc/03_normalizacion.md](doc/03_normalizacion.md) | listo para revisar |
-| Modelo de tablas y diccionario de datos | [doc/04_tablas.md](doc/04_tablas.md) | listo para revisar |
-| Consultas y subconsultas | [doc/05_consultas.md](doc/05_consultas.md) | listo para revisar |
-| Vistas, procedimientos, triggers, cursor y funciones | [doc/06_objetos.md](doc/06_objetos.md) | listo para revisar |
-| Manejo de errores, seguridad y centralización | [doc/07_errores_seguridad.md](doc/07_errores_seguridad.md) | listo para revisar |
-| Conclusiones | [doc/08_conclusiones.md](doc/08_conclusiones.md) | listo para revisar |
-
-El documento completo para entregar es [doc/TP_integrador_RedBull.docx](doc/TP_integrador_RedBull.docx). Junta todas las secciones en el orden del enunciado, con carátula e índice. Faltan los legajos y quién hizo cada área (están marcados en amarillo). Si se cambia alguna sección, el cambio también se pasa al .docx.
-
-Las convenciones de nombres, tipos y manejo de errores estan en [doc/convenciones.md](doc/convenciones.md). Leerlas antes de escribir la primera tabla porfa.
+El documento para entregar es [doc/TP_integrador_RedBull.docx](doc/TP_integrador_RedBull.docx). Tiene todas las secciones en el orden del enunciado, con carátula e índice. Faltan los legajos y quién hizo cada área (están marcados en amarillo).
 
 ## Cómo trabajamos con Git
 

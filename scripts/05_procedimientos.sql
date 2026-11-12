@@ -18,16 +18,19 @@ begin
         select @gpinsc = id_gp from Inscripcion where id_inscripcion = @idinsc
 
         if @gpsesion is null
-            raiserror('la sesion %d no existe', 16, 1, @idsesion)
+            raiserror('la sesion no existe', 16, 1)
 
         if @gpinsc is null
-            raiserror('la inscripcion %d no existe', 16, 1, @idinsc)
+            raiserror('la inscripcion no existe', 16, 1)
 
         if @gpsesion <> @gpinsc
-            raiserror('la inscripcion %d no es del Gran Premio de la sesion %d (RN10)', 16, 1, @idinsc, @idsesion)
+            raiserror('la inscripcion no es del mismo Gran Premio que la sesion', 16, 1)
 
         if exists (select 1 from Resultado where id_sesion = @idsesion and id_inscripcion = @idinsc)
-            raiserror('ese piloto ya tiene un resultado cargado en la sesion %d', 16, 1, @idsesion)
+            raiserror('ese piloto ya tiene un resultado cargado en la sesion', 16, 1)
+
+        if @pos is not null and exists (select 1 from Resultado where id_sesion = @idsesion and posicion = @pos)
+            raiserror('esa posicion ya la tiene otro piloto en la sesion', 16, 1)
 
         begin transaction
 
@@ -66,23 +69,23 @@ begin
         where id_gp = @idgp
 
         if @fecha is null
-            raiserror('el Gran Premio %d no existe', 16, 1, @idgp)
+            raiserror('el Gran Premio no existe', 16, 1)
 
         if @cerrado = 1
-            raiserror('el Gran Premio %d ya esta cerrado', 16, 1, @idgp)
+            raiserror('el Gran Premio ya esta cerrado', 16, 1)
 
         if not exists (select 1 from Piloto where id_empleado = @idpiloto)
-            raiserror('el piloto %d no existe', 16, 1, @idpiloto)
+            raiserror('el piloto no existe', 16, 1)
 
         if dbo.fn_contrato_vigente(@idpiloto, @fecha) is null
-            raiserror('el piloto %d no tiene contrato vigente en la fecha del Gran Premio (RN04)', 16, 1, @idpiloto)
+            raiserror('el piloto no tiene contrato vigente en la fecha del Gran Premio', 16, 1)
 
         select @cant = count(*) from Inscripcion where id_gp = @idgp
         if @cant >= 2
-            raiserror('el Gran Premio %d ya tiene dos pilotos inscriptos (RN03)', 16, 1, @idgp)
+            raiserror('el Gran Premio ya tiene dos pilotos inscriptos', 16, 1)
 
         if not exists (select 1 from Chasis where id_chasis = @idchasis and anio = @anio)
-            raiserror('el chasis %d no existe o no es de la temporada del Gran Premio (RN06)', 16, 1, @idchasis)
+            raiserror('el chasis no existe o no es de la temporada del Gran Premio', 16, 1)
 
         begin transaction
 
@@ -92,7 +95,7 @@ begin
         commit transaction
 
         print 'piloto ' + cast(@idpiloto as varchar(10)) + ' inscripto en el GP ' + cast(@idgp as varchar(10))
-            + ' (inscripcion ' + cast(scope_identity() as varchar(10)) + ')'
+            + ' (inscripcion ' + cast(@@identity as varchar(10)) + ')'
         return 0
     end try
     begin catch
@@ -149,10 +152,10 @@ begin
 
     begin try
         if not exists (select 1 from GranPremio where id_gp = @idgp)
-            raiserror('el Gran Premio %d no existe', 16, 1, @idgp)
+            raiserror('el Gran Premio no existe', 16, 1)
 
         if exists (select 1 from GranPremio where id_gp = @idgp and cerrado = 1)
-            raiserror('el Gran Premio %d ya estaba cerrado (RN15)', 16, 1, @idgp)
+            raiserror('el Gran Premio ya estaba cerrado', 16, 1)
 
         begin transaction
 
@@ -172,17 +175,17 @@ begin
                 estado = case when estado = 'Nuevo' then 'En uso' else estado end
             where id_componente = @idcomp
 
-            if exists (select 1
-                       from Componente c
-                       inner join TipoComponente t on t.id_tipo = c.id_tipo
-                       where c.id_componente = @idcomp
-                         and c.km_acumulados >= t.vida_util_km
-                         and c.estado <> 'Retirado')
+            if exists (
+                select 1
+                from Componente c
+                inner join TipoComponente t on t.id_tipo = c.id_tipo
+                where c.id_componente = @idcomp and c.km_acumulados >= t.vida_util_km and c.estado <> 'Retirado'
+            )
             begin
                 exec @r = usp_retirar_componente @idcomp = @idcomp
 
                 if @r <> 0
-                    raiserror('no se pudo retirar la pieza %d', 16, 1, @idcomp)
+                    raiserror('no se pudo retirar una de las piezas', 16, 1)
 
                 set @retiradas = @retiradas + 1
             end
@@ -230,27 +233,27 @@ begin
             raiserror('el monto de la compra tiene que ser mayor a 0', 16, 1)
 
         if not exists (select 1 from TipoComponente where id_tipo = @idtipo)
-            raiserror('el tipo de pieza %d no existe', 16, 1, @idtipo)
+            raiserror('el tipo de pieza no existe', 16, 1)
 
         if not exists (select 1 from CategoriaGasto where id_categoria = @idcat)
-            raiserror('la categoria %d no existe', 16, 1, @idcat)
+            raiserror('la categoria no existe', 16, 1)
 
         if not exists (select 1 from Proveedor where id_proveedor = @idprov)
-            raiserror('el proveedor %d no existe', 16, 1, @idprov)
+            raiserror('el proveedor no existe', 16, 1)
 
         begin transaction
 
         insert into Componente (id_tipo, numero_serie)
         values (@idtipo, @serie)
 
-        set @idcomp = scope_identity()
+        set @idcomp = @@identity
 
         insert into Gasto (fecha, monto_usd, descripcion, id_categoria, id_proveedor, id_componente)
         values (@fecha, @monto, @descr, @idcat, @idprov, @idcomp)
 
         commit transaction
 
-        print 'compra registrada: pieza ' + @serie + ' (id ' + cast(@idcomp as varchar(10)) + '), gasto ' + cast(scope_identity() as varchar(10))
+        print 'compra registrada: pieza ' + @serie + ' (id ' + cast(@idcomp as varchar(10)) + ')'
         return 0
     end try
     begin catch
@@ -279,10 +282,10 @@ begin
             raiserror('el monto del gasto tiene que ser mayor a 0', 16, 1)
 
         if not exists (select 1 from CategoriaGasto where id_categoria = @idcat)
-            raiserror('la categoria %d no existe', 16, 1, @idcat)
+            raiserror('la categoria no existe', 16, 1)
 
         if not exists (select 1 from Proveedor where id_proveedor = @idprov)
-            raiserror('el proveedor %d no existe', 16, 1, @idprov)
+            raiserror('el proveedor no existe', 16, 1)
 
         begin transaction
 
@@ -291,7 +294,7 @@ begin
 
         commit transaction
 
-        print 'gasto registrado (id ' + cast(scope_identity() as varchar(10)) + ')'
+        print 'gasto registrado'
         return 0
     end try
     begin catch

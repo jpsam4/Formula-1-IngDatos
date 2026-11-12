@@ -12,9 +12,7 @@ begin
     inner join Sesion s on s.id_sesion = r.id_sesion
     inner join GranPremio g on g.id_gp = s.id_gp
     inner join Inscripcion i on i.id_inscripcion = r.id_inscripcion
-    inner join Puntaje p on p.anio = g.anio
-                        and p.id_tipo_sesion = s.id_tipo_sesion
-                        and p.posicion = r.posicion
+    inner join Puntaje p on p.anio = g.anio and p.id_tipo_sesion = s.id_tipo_sesion and p.posicion = r.posicion
     where i.id_piloto = @idpiloto
       and g.anio = @anio
 

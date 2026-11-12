@@ -10,9 +10,7 @@ from (
     from GranPremio g
     inner join Sesion s on s.id_gp = g.id_gp
     inner join Resultado r on r.id_sesion = s.id_sesion
-    left join Puntaje p on p.anio = g.anio
-                       and p.id_tipo_sesion = s.id_tipo_sesion
-                       and p.posicion = r.posicion
+    left join Puntaje p on p.anio = g.anio and p.id_tipo_sesion = s.id_tipo_sesion and p.posicion = r.posicion
     group by g.anio, g.ronda, g.nombre
 ) x
 go

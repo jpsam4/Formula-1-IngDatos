@@ -17,7 +17,7 @@ begin
     )
     begin
         rollback transaction
-        raiserror('no se puede cargar una sesion sprint en un Gran Premio sin formato sprint (RN01)', 16, 1)
+        raiserror('no se puede cargar una sesion sprint en un Gran Premio sin formato sprint', 16, 1)
         return
     end
 
@@ -29,7 +29,7 @@ begin
     )
     begin
         rollback transaction
-        raiserror('la fecha de la sesion esta fuera del fin de semana del Gran Premio (RN02)', 16, 1)
+        raiserror('la fecha de la sesion esta fuera del fin de semana del Gran Premio', 16, 1)
         return
     end
 end
@@ -45,32 +45,30 @@ begin
     if exists (
         select 1
         from inserted i
-        inner join Contrato c on c.id_empleado = i.id_empleado
-                             and c.id_contrato <> i.id_contrato
+        inner join Contrato c on c.id_empleado = i.id_empleado and c.id_contrato <> i.id_contrato
         where c.fecha_inicio <= isnull(i.fecha_fin, '9999-12-31')
           and i.fecha_inicio <= isnull(c.fecha_fin, '9999-12-31')
     )
     begin
         rollback transaction
-        raiserror('el empleado ya tiene un contrato que se superpone con esas fechas (RN07)', 16, 1)
+        raiserror('el empleado ya tiene un contrato que se superpone con esas fechas', 16, 1)
         return
     end
 
     if exists (select 1 from inserted i
-               where i.condicion is not null
-                 and not exists (select 1 from Piloto p where p.id_empleado = i.id_empleado))
+        where i.condicion is not null and i.id_empleado not in (select id_empleado from Piloto))
     begin
         rollback transaction
-        raiserror('solo el contrato de un piloto dice si es titular o reserva (RN08)', 16, 1)
+        raiserror('solo el contrato de un piloto dice si es titular o reserva', 16, 1)
         return
     end
 
     if exists (select 1 from inserted i
-               inner join Piloto p on p.id_empleado = i.id_empleado
-               where i.condicion is null)
+        inner join Piloto p on p.id_empleado = i.id_empleado
+        where i.condicion is null)
     begin
         rollback transaction
-        raiserror('el contrato de un piloto tiene que decir si es titular o reserva (RN08)', 16, 1)
+        raiserror('el contrato de un piloto tiene que decir si es titular o reserva', 16, 1)
         return
     end
 
@@ -89,64 +87,53 @@ as
 begin
     set nocount on
 
-    if exists (select 1
-               from inserted i
-               inner join Componente c on c.id_componente = i.id_componente
-               where c.estado in ('Retirado', 'Danado'))
+    if exists (
+        select 1
+        from inserted i
+        inner join Componente c on c.id_componente = i.id_componente
+        where c.estado in ('Retirado', 'Danado')
+    )
     begin
         rollback transaction
-        raiserror('no se puede usar una pieza retirada o danada (RN16)', 16, 1)
+        raiserror('no se puede usar una pieza retirada o danada', 16, 1)
         return
     end
 
-    if exists (select 1
-               from inserted i
-               inner join Inscripcion ins on ins.id_inscripcion = i.id_inscripcion
-               inner join GranPremio g on g.id_gp = ins.id_gp
-               where g.cerrado = 1)
+    if exists (
+        select 1
+        from inserted i
+        inner join Inscripcion ins on ins.id_inscripcion = i.id_inscripcion
+        inner join GranPremio g on g.id_gp = ins.id_gp
+        where g.cerrado = 1
+    )
     begin
         rollback transaction
-        raiserror('el Gran Premio ya esta cerrado y no acepta mas usos de piezas (RN15)', 16, 1)
+        raiserror('el Gran Premio ya esta cerrado y no acepta mas usos de piezas', 16, 1)
         return
     end
-
-    declare @nuevas table (id_componente int, id_inscripcion int)
-
-    insert into @nuevas (id_componente, id_inscripcion)
-    select i.id_componente, min(i.id_inscripcion)
-    from inserted i
-    where not exists (select 1
-                      from UsoComponente u
-                      where u.id_componente = i.id_componente
-                        and u.id_inscripcion not in (select x.id_inscripcion from inserted x
-                                                     where x.id_componente = u.id_componente))
-    group by i.id_componente
 
     insert into Penalizacion (id_inscripcion, id_componente, puestos_grilla, motivo)
     select x.id_inscripcion, x.id_componente,
-           case when x.numero = x.cantidad_max + 1 then 10 else 5 end,
-           cast(x.numero as varchar(5)) + ' ' + x.tipo + ' usados en la temporada y el limite es ' + cast(x.cantidad_max as varchar(5))
+           case when x.usadas = x.cantidad_max + 1 then 10 else 5 end,
+           cast(x.usadas as varchar(5)) + ' ' + x.tipo + ' usados en la temporada y el limite es ' + cast(x.cantidad_max as varchar(5))
     from (
-        select n.id_componente, n.id_inscripcion, t.nombre as tipo, l.cantidad_max,
+        select i.id_inscripcion, i.id_componente, t.nombre as tipo, l.cantidad_max,
                (select count(distinct u.id_componente)
                 from UsoComponente u
                 inner join Inscripcion i2 on i2.id_inscripcion = u.id_inscripcion
                 inner join GranPremio g2 on g2.id_gp = i2.id_gp
                 inner join Componente c2 on c2.id_componente = u.id_componente
-                where i2.id_piloto = ins.id_piloto
-                  and g2.anio = g.anio
-                  and c2.id_tipo = c.id_tipo
-                  and u.id_componente not in (select id_componente from @nuevas))
-               + row_number() over (partition by ins.id_piloto, g.anio, c.id_tipo
-                                    order by n.id_inscripcion, n.id_componente) as numero
-        from @nuevas n
-        inner join Inscripcion ins on ins.id_inscripcion = n.id_inscripcion
+                where i2.id_piloto = ins.id_piloto and g2.anio = g.anio and c2.id_tipo = c.id_tipo
+                and (u.id_componente <= i.id_componente or u.id_componente not in (select id_componente from inserted))) as usadas
+        from inserted i
+        inner join Inscripcion ins on ins.id_inscripcion = i.id_inscripcion
         inner join GranPremio g on g.id_gp = ins.id_gp
-        inner join Componente c on c.id_componente = n.id_componente
+        inner join Componente c on c.id_componente = i.id_componente
         inner join TipoComponente t on t.id_tipo = c.id_tipo
         inner join LimiteComponente l on l.anio = g.anio and l.id_tipo = c.id_tipo
+        where (select count(*) from UsoComponente u where u.id_componente = i.id_componente) = 1
     ) x
-    where x.numero > x.cantidad_max
+    where x.usadas > x.cantidad_max
 end
 go
 
@@ -157,41 +144,41 @@ as
 begin
     set nocount on
 
-    if exists (select 1 from inserted i
-               where not exists (select 1 from TopePresupuestario t where t.anio = year(i.fecha)))
+    if exists (select 1 from inserted where year(fecha) not in (select anio from TopePresupuestario))
     begin
         rollback transaction
-        raiserror('no hay tope presupuestario cargado para el anio del gasto (RN19)', 16, 1)
+        raiserror('no hay tope presupuestario cargado para el anio del gasto', 16, 1)
         return
     end
 
-    if exists (select 1
-               from TopePresupuestario t
-               where t.anio in (select year(fecha) from inserted)
-                 and dbo.fn_gasto_computable(t.anio) > t.monto_usd)
+    if exists (
+        select 1
+        from inserted i
+        inner join Gasto g on g.id_componente = i.id_componente and g.id_gasto <> i.id_gasto
+    )
     begin
         rollback transaction
-        raiserror('el gasto hace pasar el tope presupuestario del anio (RN19)', 16, 1)
+        raiserror('esa pieza ya tiene un gasto de compra', 16, 1)
         return
     end
 
-    if not exists (select 1 from deleted)
+    if exists (
+        select 1
+        from TopePresupuestario t
+        where t.anio in (select year(fecha) from inserted)
+          and dbo.fn_gasto_computable(t.anio) > t.monto_usd
+    )
     begin
-        insert into AlertaTope (id_gasto, gasto_acumulado_usd)
-        select x.id_gasto, x.acumulado
-        from (
-            select i.id_gasto, i.monto_usd,
-                   t.monto_usd * t.umbral_alerta_pct / 100 as limite,
-                   dbo.fn_gasto_computable(t.anio)
-                     - sum(i.monto_usd) over (partition by t.anio)
-                     + sum(i.monto_usd) over (partition by t.anio order by i.id_gasto
-                                         rows between unbounded preceding and current row) as acumulado
-            from inserted i
-            inner join CategoriaGasto c on c.id_categoria = i.id_categoria
-            inner join TopePresupuestario t on t.anio = year(i.fecha)
-            where c.computa_tope = 1
-        ) x
-        where x.acumulado >= x.limite
-          and x.acumulado - x.monto_usd < x.limite
+        rollback transaction
+        raiserror('el gasto hace pasar el tope presupuestario del anio', 16, 1)
+        return
     end
+
+    insert into AlertaTope (id_gasto, gasto_acumulado_usd)
+    select max(i.id_gasto), dbo.fn_gasto_computable(t.anio)
+    from inserted i
+    inner join TopePresupuestario t on t.anio = year(i.fecha)
+    where dbo.fn_gasto_computable(t.anio) >= t.monto_usd * t.umbral_alerta_pct / 100
+      and not exists (select 1 from AlertaTope a inner join Gasto g on g.id_gasto = a.id_gasto where year(g.fecha) = t.anio)
+    group by t.anio
 end

@@ -1,29 +1,30 @@
 ﻿use master
 
-if not exists (select 1 from sys.server_principals where name = 'login_director')
-    create login login_director with password = 'Rbr-Director-2026'
-if not exists (select 1 from sys.server_principals where name = 'login_ingeniero')
-    create login login_ingeniero with password = 'Rbr-Ingeniero-2026'
-if not exists (select 1 from sys.server_principals where name = 'login_rrhh')
-    create login login_rrhh with password = 'Rbr-Rrhh-2026'
-if not exists (select 1 from sys.server_principals where name = 'login_finanzas')
-    create login login_finanzas with password = 'Rbr-Finanzas-2026'
-if not exists (select 1 from sys.server_principals where name = 'login_consulta')
-    create login login_consulta with password = 'Rbr-Consulta-2026'
+if exists (select * from syslogins where name = 'login_director') drop login login_director
+if exists (select * from syslogins where name = 'login_ingeniero') drop login login_ingeniero
+if exists (select * from syslogins where name = 'login_rrhh') drop login login_rrhh
+if exists (select * from syslogins where name = 'login_finanzas') drop login login_finanzas
+if exists (select * from syslogins where name = 'login_consulta') drop login login_consulta
+
+create login login_director with password = 'Rbr-Director-2026'
+create login login_ingeniero with password = 'Rbr-Ingeniero-2026'
+create login login_rrhh with password = 'Rbr-Rrhh-2026'
+create login login_finanzas with password = 'Rbr-Finanzas-2026'
+create login login_consulta with password = 'Rbr-Consulta-2026'
 
 use EscuderiaF1
 
-if database_principal_id('rol_director_deportivo') is null create role rol_director_deportivo
-if database_principal_id('rol_ingeniero_pista') is null create role rol_ingeniero_pista
-if database_principal_id('rol_rrhh') is null create role rol_rrhh
-if database_principal_id('rol_finanzas') is null create role rol_finanzas
-if database_principal_id('rol_consulta') is null create role rol_consulta
+create user usr_director for login login_director
+create user usr_ingeniero for login login_ingeniero
+create user usr_rrhh for login login_rrhh
+create user usr_finanzas for login login_finanzas
+create user usr_consulta for login login_consulta
 
-if database_principal_id('usr_director') is null create user usr_director for login login_director
-if database_principal_id('usr_ingeniero') is null create user usr_ingeniero for login login_ingeniero
-if database_principal_id('usr_rrhh') is null create user usr_rrhh for login login_rrhh
-if database_principal_id('usr_finanzas') is null create user usr_finanzas for login login_finanzas
-if database_principal_id('usr_consulta') is null create user usr_consulta for login login_consulta
+create role rol_director_deportivo
+create role rol_ingeniero_pista
+create role rol_rrhh
+create role rol_finanzas
+create role rol_consulta
 
 alter role rol_director_deportivo add member usr_director
 alter role rol_ingeniero_pista add member usr_ingeniero
@@ -43,14 +44,13 @@ grant select on Resultado to rol_director_deportivo
 grant select on Inscripcion to rol_director_deportivo
 grant select, insert, update on Sesion to rol_director_deportivo
 grant select, insert on GranPremio to rol_director_deportivo
-grant update (ronda, id_circuito, nombre, fecha_inicio, fecha_fin, es_sprint) on GranPremio to rol_director_deportivo
 grant select on vw_puntos_equipo_por_gp to rol_director_deportivo
 grant select on vw_nomina to rol_director_deportivo
 grant select on vw_estado_piezas to rol_director_deportivo
 grant execute on usp_cargar_resultado to rol_director_deportivo
 grant execute on usp_inscribir_piloto to rol_director_deportivo
 grant execute on dbo.fn_puntos_piloto to rol_director_deportivo
-deny update (cerrado) on GranPremio to rol_director_deportivo
+deny update, delete on GranPremio to rol_director_deportivo
 deny insert, update, delete on Resultado to rol_director_deportivo
 deny insert, update, delete on Inscripcion to rol_director_deportivo
 deny select on Contrato to rol_director_deportivo
@@ -74,7 +74,7 @@ grant execute on usp_retirar_componente to rol_ingeniero_pista
 deny update, delete on UsoComponente to rol_ingeniero_pista
 deny insert, update, delete on Componente to rol_ingeniero_pista
 deny insert, update, delete on Penalizacion to rol_ingeniero_pista
-deny update (cerrado) on GranPremio to rol_ingeniero_pista
+deny insert, update, delete on GranPremio to rol_ingeniero_pista
 deny select on Contrato to rol_ingeniero_pista
 deny select on Gasto to rol_ingeniero_pista
 
