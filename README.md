@@ -45,6 +45,8 @@ Avance del documento:
 | Manejo de errores, seguridad y centralización | [doc/07_errores_seguridad.md](doc/07_errores_seguridad.md) | listo para revisar |
 | Conclusiones | [doc/08_conclusiones.md](doc/08_conclusiones.md) | listo para revisar |
 
+El documento completo para entregar es [doc/TP_integrador_RedBull.docx](doc/TP_integrador_RedBull.docx). Junta todas las secciones en el orden del enunciado, con carátula e índice. Faltan los legajos y quién hizo cada área (están marcados en amarillo). Si se cambia alguna sección, el cambio también se pasa al .docx.
+
 Las convenciones de nombres, tipos y manejo de errores estan en [doc/convenciones.md](doc/convenciones.md). Leerlas antes de escribir la primera tabla porfa.
 
 ## Cómo trabajamos con Git
