@@ -8,7 +8,6 @@ go
 
 use EscuderiaF1
 
-
 create table Pais (
     id_pais int identity(1,1) constraint PK_Pais primary key,
     nombre nvarchar(60) not null constraint UQ_Pais_nombre unique,
@@ -53,8 +52,6 @@ create table CategoriaGasto (
     computa_tope bit not null constraint DF_CategoriaGasto_computa default 1
 )
 
-
-
 create table Circuito (
     id_circuito int identity(1,1) not null,
     nombre nvarchar(80) not null,
@@ -63,8 +60,7 @@ create table Circuito (
     longitud_km decimal(5,3) not null,
     constraint PK_Circuito primary key (id_circuito),
     constraint UQ_Circuito_nombre unique (nombre),
-    constraint FK_Circuito_Pais
-        foreign key (id_pais) references Pais (id_pais),
+    constraint FK_Circuito_Pais foreign key (id_pais) references Pais (id_pais),
     constraint CK_Circuito_longitud check (longitud_km > 0)
 )
 
@@ -108,14 +104,10 @@ create table LimiteComponente (
     anio smallint not null,
     id_tipo int not null,
     cantidad_max tinyint not null,
-    constraint PK_LimiteComponente
-        primary key (anio, id_tipo),
-    constraint FK_LimiteComponente_Temporada
-        foreign key (anio) references Temporada (anio),
-    constraint FK_LimiteComponente_Tipo
-        foreign key (id_tipo) references TipoComponente (id_tipo),
-    constraint CK_LimiteComponente_cantidad
-        check (cantidad_max > 0)
+    constraint PK_LimiteComponente primary key (anio, id_tipo),
+    constraint FK_LimiteComponente_Temporada foreign key (anio) references Temporada (anio),
+    constraint FK_LimiteComponente_Tipo foreign key (id_tipo) references TipoComponente (id_tipo),
+    constraint CK_LimiteComponente_cantidad check (cantidad_max > 0)
 )
 
 create table Componente (
@@ -141,15 +133,11 @@ create table Proveedor (
 create table TopePresupuestario (
     anio smallint not null,
     monto_usd decimal(14,2) not null,
-    umbral_alerta_pct tinyint not null
-        constraint DF_Tope_umbral default 90
-        constraint CK_Tope_umbral check (umbral_alerta_pct between 1 and 99),
+    umbral_alerta_pct tinyint not null constraint DF_Tope_umbral default 90 constraint CK_Tope_umbral check (umbral_alerta_pct between 1 and 99),
     constraint PK_TopePresupuestario primary key (anio),
     constraint FK_Tope_Temporada foreign key (anio) references Temporada (anio),
     constraint CK_Tope_monto check (monto_usd > 0)
 )
-
-
 
 create table GranPremio (
     id_gp int identity(1,1) not null,
@@ -187,14 +175,10 @@ create table Contrato (
     sueldo_mensual_usd decimal(14,2) not null,
     condicion nvarchar(10) null,
     constraint PK_Contrato primary key (id_contrato),
-    constraint FK_Contrato_Empleado
-        foreign key (id_empleado) references Empleado (id_empleado),
-    constraint CK_Contrato_fechas
-        check (fecha_fin is null or fecha_fin > fecha_inicio),
-    constraint CK_Contrato_sueldo
-        check (sueldo_mensual_usd > 0),
-    constraint CK_Contrato_condicion
-        check (condicion is null or condicion in ('Titular', 'Reserva'))
+    constraint FK_Contrato_Empleado foreign key (id_empleado) references Empleado (id_empleado),
+    constraint CK_Contrato_fechas check (fecha_fin is null or fecha_fin > fecha_inicio),
+    constraint CK_Contrato_sueldo check (sueldo_mensual_usd > 0),
+    constraint CK_Contrato_condicion check (condicion is null or condicion in ('Titular', 'Reserva'))
 )
 
 create table Gasto (
@@ -212,8 +196,6 @@ create table Gasto (
 alter table Gasto add constraint FK_Gasto_Categoria foreign key (id_categoria) references CategoriaGasto (id_categoria)
 alter table Gasto add constraint FK_Gasto_Proveedor foreign key (id_proveedor) references Proveedor (id_proveedor)
 alter table Gasto add constraint FK_Gasto_Componente foreign key (id_componente) references Componente (id_componente)
-
-
 
 create table Sesion (
     id_sesion int identity(1,1) not null,
@@ -258,8 +240,6 @@ create table AlertaTope (
     constraint UQ_AlertaTope_gasto unique (id_gasto)
 )
 
-
-
 create table Resultado (
     id_sesion int not null,
     id_inscripcion int not null,
@@ -268,12 +248,8 @@ create table Resultado (
     constraint PK_Resultado primary key (id_sesion, id_inscripcion),
     constraint FK_Resultado_Sesion foreign key (id_sesion) references Sesion (id_sesion),
     constraint FK_Resultado_Inscripcion foreign key (id_inscripcion) references Inscripcion (id_inscripcion),
-    constraint CK_Resultado_estado
-        check (estado in ('Finalizo', 'Abandono', 'Descalificado', 'No largo')),
-    constraint CK_Resultado_posicion check (
-        (estado = 'Finalizo' and posicion is not null and posicion > 0)
-        or (estado <> 'Finalizo' and posicion is null)
-    )
+    constraint CK_Resultado_estado check (estado in ('Finalizo', 'Abandono', 'Descalificado', 'No largo')),
+    constraint CK_Resultado_posicion check ((estado = 'Finalizo' and posicion is not null and posicion > 0) or (estado <> 'Finalizo' and posicion is null))
 )
 
 create table UsoComponente (
@@ -622,18 +598,15 @@ create or alter function dbo.fn_puntos_piloto (@idpiloto int, @anio smallint)
 returns int
 as
 begin
-    declare @pts int
-
-    select @pts = sum(p.puntos)
-    from Resultado r
-    inner join Sesion s on s.id_sesion = r.id_sesion
-    inner join GranPremio g on g.id_gp = s.id_gp
-    inner join Inscripcion i on i.id_inscripcion = r.id_inscripcion
-    inner join Puntaje p on p.anio = g.anio and p.id_tipo_sesion = s.id_tipo_sesion and p.posicion = r.posicion
-    where i.id_piloto = @idpiloto
-      and g.anio = @anio
-
-    return isnull(@pts, 0)
+    return (
+        select isnull(sum(p.puntos), 0)
+        from Resultado r
+        inner join Sesion s on s.id_sesion = r.id_sesion
+        inner join GranPremio g on g.id_gp = s.id_gp
+        inner join Inscripcion i on i.id_inscripcion = r.id_inscripcion
+        inner join Puntaje p on p.anio = g.anio and p.id_tipo_sesion = s.id_tipo_sesion and p.posicion = r.posicion
+        where i.id_piloto = @idpiloto and g.anio = @anio
+    )
 end
 go
 
@@ -641,15 +614,11 @@ create or alter function dbo.fn_contrato_vigente (@idemp int, @fecha date)
 returns int
 as
 begin
-    declare @idc int
-
-    select @idc = id_contrato
-    from Contrato
-    where id_empleado = @idemp
-      and fecha_inicio <= @fecha
-      and (fecha_fin is null or fecha_fin >= @fecha)
-
-    return @idc
+    return (
+        select id_contrato
+        from Contrato
+        where id_empleado = @idemp and fecha_inicio <= @fecha and (fecha_fin is null or fecha_fin >= @fecha)
+    )
 end
 go
 
@@ -657,17 +626,12 @@ create or alter function dbo.fn_km_restantes (@idcomp int)
 returns decimal(10,2)
 as
 begin
-    declare @resto decimal(10,2)
-
-    select @resto = t.vida_util_km - c.km_acumulados
-    from Componente c
-    inner join TipoComponente t on t.id_tipo = c.id_tipo
-    where c.id_componente = @idcomp
-
-    if @resto < 0
-        set @resto = 0
-
-    return @resto
+    return (
+        select iif(c.km_acumulados > t.vida_util_km, 0, t.vida_util_km - c.km_acumulados)
+        from Componente c
+        inner join TipoComponente t on t.id_tipo = c.id_tipo
+        where c.id_componente = @idcomp
+    )
 end
 go
 
@@ -679,8 +643,7 @@ begin
         select isnull(sum(g.monto_usd), 0)
         from Gasto g
         inner join CategoriaGasto c on c.id_categoria = g.id_categoria
-        where c.computa_tope = 1
-          and year(g.fecha) = @anio
+        where c.computa_tope = 1 and year(g.fecha) = @anio
     )
 end
 go
@@ -689,9 +652,7 @@ create or alter function dbo.fn_piezas_piloto (@idpiloto int, @anio smallint)
 returns table
 as
 return (
-    select t.nombre as tipo,
-           l.cantidad_max as limite,
-           isnull(x.usadas, 0) as usadas,
+    select t.nombre as tipo, l.cantidad_max as limite, isnull(x.usadas, 0) as usadas,
            l.cantidad_max - isnull(x.usadas, 0) as disponibles
     from LimiteComponente l
     inner join TipoComponente t on t.id_tipo = l.id_tipo
@@ -701,8 +662,7 @@ return (
         inner join Componente c on c.id_componente = u.id_componente
         inner join Inscripcion i on i.id_inscripcion = u.id_inscripcion
         inner join GranPremio g on g.id_gp = i.id_gp
-        where i.id_piloto = @idpiloto
-          and g.anio = @anio
+        where i.id_piloto = @idpiloto and g.anio = @anio
         group by c.id_tipo
     ) x on x.id_tipo = l.id_tipo
     where l.anio = @anio
@@ -726,11 +686,8 @@ go
 create or alter view vw_nomina
 as
 select e.id_empleado, e.apellido, e.nombre,
-       p.nombre as puesto, p.departamento,
-       pa.nombre as nacionalidad,
-       c.fecha_inicio as contrato_desde,
-       c.fecha_fin as contrato_hasta,
-       c.condicion
+       p.nombre as puesto, p.departamento, pa.nombre as nacionalidad,
+       c.fecha_inicio as contrato_desde, c.fecha_fin as contrato_hasta, c.condicion
 from Empleado e
 inner join Puesto p on p.id_puesto = e.id_puesto
 inner join Pais pa on pa.id_pais = e.id_pais
@@ -742,29 +699,18 @@ as
 select c.id_componente, c.numero_serie, t.nombre as tipo, c.estado,
        c.km_acumulados, t.vida_util_km,
        dbo.fn_km_restantes(c.id_componente) as km_restantes,
-       cast(c.km_acumulados * 100 / t.vida_util_km as decimal(5,1)) as pct_usado,
-       (select top 1 e.apellido
-        from UsoComponente u
-        inner join Inscripcion i on i.id_inscripcion = u.id_inscripcion
-        inner join Empleado e on e.id_empleado = i.id_piloto
-        where u.id_componente = c.id_componente
-        order by i.id_inscripcion desc) as ultimo_piloto
+       cast(c.km_acumulados * 100 / t.vida_util_km as decimal(5,1)) as pct_usado
 from Componente c
 inner join TipoComponente t on t.id_tipo = c.id_tipo
 go
 
 create or alter view vw_situacion_tope
 as
-select t.anio,
-       t.monto_usd as tope_usd,
+select t.anio, t.monto_usd as tope_usd,
        dbo.fn_gasto_computable(t.anio) as gastado_usd,
        t.monto_usd - dbo.fn_gasto_computable(t.anio) as disponible_usd,
        cast(dbo.fn_gasto_computable(t.anio) * 100 / t.monto_usd as decimal(5,2)) as pct_usado,
-       t.umbral_alerta_pct,
-       (select count(*)
-        from AlertaTope a
-        inner join Gasto g on g.id_gasto = a.id_gasto
-        where year(g.fecha) = t.anio) as alertas
+       t.umbral_alerta_pct
 from TopePresupuestario t
 go
 
@@ -776,7 +722,6 @@ create or alter procedure usp_cargar_resultado
 as
 begin
     set nocount on
-    set xact_abort on
 
     declare @gpsesion int, @gpinsc int
 
@@ -784,37 +729,19 @@ begin
         select @gpsesion = id_gp from Sesion where id_sesion = @idsesion
         select @gpinsc = id_gp from Inscripcion where id_inscripcion = @idinsc
 
-        if @gpsesion is null
-            raiserror('la sesion no existe', 16, 1)
-
-        if @gpinsc is null
-            raiserror('la inscripcion no existe', 16, 1)
-
         if @gpsesion <> @gpinsc
             raiserror('la inscripcion no es del mismo Gran Premio que la sesion', 16, 1)
 
-        if exists (select 1 from Resultado where id_sesion = @idsesion and id_inscripcion = @idinsc)
-            raiserror('ese piloto ya tiene un resultado cargado en la sesion', 16, 1)
-
-        if @pos is not null and exists (select 1 from Resultado where id_sesion = @idsesion and posicion = @pos)
+        if exists (select 1 from Resultado where id_sesion = @idsesion and posicion = @pos)
             raiserror('esa posicion ya la tiene otro piloto en la sesion', 16, 1)
-
-        begin transaction
 
         insert into Resultado (id_sesion, id_inscripcion, posicion, estado)
         values (@idsesion, @idinsc, @pos, @estado)
 
-        commit transaction
-
-        print 'resultado cargado: sesion ' + cast(@idsesion as varchar(10)) + ', inscripcion ' + cast(@idinsc as varchar(10))
-        return 0
+        print 'resultado cargado'
     end try
     begin catch
-        if xact_state() <> 0
-            rollback transaction
-
         print 'error: ' + error_message()
-        return 1
     end catch
 end
 go
@@ -826,51 +753,31 @@ create or alter procedure usp_inscribir_piloto
 as
 begin
     set nocount on
-    set xact_abort on
 
-    declare @fecha date, @anio smallint, @cerrado bit, @cant int
+    declare @fecha date, @anio smallint
 
     begin try
-        select @fecha = fecha_inicio, @anio = anio, @cerrado = cerrado
-        from GranPremio
-        where id_gp = @idgp
+        select @fecha = fecha_inicio, @anio = anio from GranPremio where id_gp = @idgp
 
         if @fecha is null
             raiserror('el Gran Premio no existe', 16, 1)
 
-        if @cerrado = 1
-            raiserror('el Gran Premio ya esta cerrado', 16, 1)
-
-        if not exists (select 1 from Piloto where id_empleado = @idpiloto)
-            raiserror('el piloto no existe', 16, 1)
-
         if dbo.fn_contrato_vigente(@idpiloto, @fecha) is null
             raiserror('el piloto no tiene contrato vigente en la fecha del Gran Premio', 16, 1)
 
-        select @cant = count(*) from Inscripcion where id_gp = @idgp
-        if @cant >= 2
+        if (select count(*) from Inscripcion where id_gp = @idgp) >= 2
             raiserror('el Gran Premio ya tiene dos pilotos inscriptos', 16, 1)
 
         if not exists (select 1 from Chasis where id_chasis = @idchasis and anio = @anio)
             raiserror('el chasis no existe o no es de la temporada del Gran Premio', 16, 1)
 
-        begin transaction
-
         insert into Inscripcion (id_gp, id_piloto, id_chasis)
         values (@idgp, @idpiloto, @idchasis)
 
-        commit transaction
-
-        print 'piloto ' + cast(@idpiloto as varchar(10)) + ' inscripto en el GP ' + cast(@idgp as varchar(10))
-            + ' (inscripcion ' + cast(@@identity as varchar(10)) + ')'
-        return 0
+        print 'piloto inscripto'
     end try
     begin catch
-        if xact_state() <> 0
-            rollback transaction
-
         print 'error: ' + error_message()
-        return 1
     end catch
 end
 go
@@ -882,28 +789,17 @@ as
 begin
     set nocount on
 
-    declare @est nvarchar(10)
-
-    select @est = estado from Componente where id_componente = @idcomp
-
-    if @est is null
+    if not exists (select 1 from Componente where id_componente = @idcomp and estado <> 'Retirado')
     begin
-        print 'error: la pieza ' + cast(@idcomp as varchar(10)) + ' no existe'
-        return 1
-    end
-
-    if @est = 'Retirado'
-    begin
-        print 'error: la pieza ' + cast(@idcomp as varchar(10)) + ' ya estaba retirada'
-        return 1
+        print 'error: la pieza no existe o ya estaba retirada'
+        return
     end
 
     update Componente
     set estado = case when @danada = 1 then 'Danado' else 'Retirado' end
     where id_componente = @idcomp
 
-    print 'pieza ' + cast(@idcomp as varchar(10)) + ' fuera de servicio (' + case when @danada = 1 then 'danada' else 'retirada' end + ')'
-    return 0
+    print 'pieza ' + cast(@idcomp as varchar(10)) + ' fuera de servicio'
 end
 go
 
@@ -914,15 +810,11 @@ begin
     set nocount on
     set xact_abort on
 
-    declare @idcomp int, @km decimal(10,2), @r int, @retiradas int
-    set @retiradas = 0
+    declare @idcomp int, @km decimal(10,2)
 
     begin try
-        if not exists (select 1 from GranPremio where id_gp = @idgp)
-            raiserror('el Gran Premio no existe', 16, 1)
-
-        if exists (select 1 from GranPremio where id_gp = @idgp and cerrado = 1)
-            raiserror('el Gran Premio ya estaba cerrado', 16, 1)
+        if not exists (select 1 from GranPremio where id_gp = @idgp and cerrado = 0)
+            raiserror('el Gran Premio no existe o ya estaba cerrado', 16, 1)
 
         begin transaction
 
@@ -942,20 +834,9 @@ begin
                 estado = case when estado = 'Nuevo' then 'En uso' else estado end
             where id_componente = @idcomp
 
-            if exists (
-                select 1
-                from Componente c
-                inner join TipoComponente t on t.id_tipo = c.id_tipo
-                where c.id_componente = @idcomp and c.km_acumulados >= t.vida_util_km and c.estado <> 'Retirado'
-            )
-            begin
-                exec @r = usp_retirar_componente @idcomp = @idcomp
-
-                if @r <> 0
-                    raiserror('no se pudo retirar una de las piezas', 16, 1)
-
-                set @retiradas = @retiradas + 1
-            end
+            if exists (select 1 from Componente c inner join TipoComponente t on t.id_tipo = c.id_tipo
+                       where c.id_componente = @idcomp and c.km_acumulados >= t.vida_util_km and c.estado <> 'Retirado')
+                exec usp_retirar_componente @idcomp = @idcomp
 
             fetch next from cur_usos into @idcomp, @km
         end
@@ -967,15 +848,13 @@ begin
 
         commit transaction
 
-        print 'GP ' + cast(@idgp as varchar(10)) + ' cerrado. piezas retiradas: ' + cast(@retiradas as varchar(10))
-        return 0
+        print 'GP ' + cast(@idgp as varchar(10)) + ' cerrado'
     end try
     begin catch
         if xact_state() <> 0
             rollback transaction
 
         print 'error: ' + error_message()
-        return 1
     end catch
 end
 go
@@ -993,42 +872,24 @@ begin
     set nocount on
     set xact_abort on
 
-    declare @idcomp int
-
     begin try
-        if @monto is null or @monto <= 0
-            raiserror('el monto de la compra tiene que ser mayor a 0', 16, 1)
-
-        if not exists (select 1 from TipoComponente where id_tipo = @idtipo)
-            raiserror('el tipo de pieza no existe', 16, 1)
-
-        if not exists (select 1 from CategoriaGasto where id_categoria = @idcat)
-            raiserror('la categoria no existe', 16, 1)
-
-        if not exists (select 1 from Proveedor where id_proveedor = @idprov)
-            raiserror('el proveedor no existe', 16, 1)
-
         begin transaction
 
         insert into Componente (id_tipo, numero_serie)
         values (@idtipo, @serie)
 
-        set @idcomp = @@identity
-
         insert into Gasto (fecha, monto_usd, descripcion, id_categoria, id_proveedor, id_componente)
-        values (@fecha, @monto, @descr, @idcat, @idprov, @idcomp)
+        values (@fecha, @monto, @descr, @idcat, @idprov, @@identity)
 
         commit transaction
 
-        print 'compra registrada: pieza ' + @serie + ' (id ' + cast(@idcomp as varchar(10)) + ')'
-        return 0
+        print 'compra registrada: pieza ' + @serie
     end try
     begin catch
         if xact_state() <> 0
             rollback transaction
 
         print 'error: ' + error_message()
-        return 1
     end catch
 end
 go
@@ -1042,34 +903,15 @@ create or alter procedure usp_registrar_gasto
 as
 begin
     set nocount on
-    set xact_abort on
 
     begin try
-        if @monto is null or @monto <= 0
-            raiserror('el monto del gasto tiene que ser mayor a 0', 16, 1)
-
-        if not exists (select 1 from CategoriaGasto where id_categoria = @idcat)
-            raiserror('la categoria no existe', 16, 1)
-
-        if not exists (select 1 from Proveedor where id_proveedor = @idprov)
-            raiserror('el proveedor no existe', 16, 1)
-
-        begin transaction
-
         insert into Gasto (fecha, monto_usd, descripcion, id_categoria, id_proveedor)
         values (@fecha, @monto, @descr, @idcat, @idprov)
 
-        commit transaction
-
         print 'gasto registrado'
-        return 0
     end try
     begin catch
-        if xact_state() <> 0
-            rollback transaction
-
         print 'error: ' + error_message()
-        return 1
     end catch
 end
 go
@@ -1128,20 +970,11 @@ begin
         return
     end
 
-    if exists (select 1 from inserted i
-        where i.condicion is not null and i.id_empleado not in (select id_empleado from Piloto))
+    if exists (select 1 from inserted i left join Piloto p on p.id_empleado = i.id_empleado
+        where (p.id_empleado is null and i.condicion is not null) or (p.id_empleado is not null and i.condicion is null))
     begin
         rollback transaction
-        raiserror('solo el contrato de un piloto dice si es titular o reserva', 16, 1)
-        return
-    end
-
-    if exists (select 1 from inserted i
-        inner join Piloto p on p.id_empleado = i.id_empleado
-        where i.condicion is null)
-    begin
-        rollback transaction
-        raiserror('el contrato de un piloto tiene que decir si es titular o reserva', 16, 1)
+        raiserror('titular o reserva va en los contratos de pilotos y solo en esos', 16, 1)
         return
     end
 
@@ -1291,7 +1124,6 @@ alter role rol_rrhh add member usr_rrhh
 alter role rol_finanzas add member usr_finanzas
 alter role rol_consulta add member usr_consulta
 
-
 grant select on Pais to rol_director_deportivo
 grant select on Temporada to rol_director_deportivo
 grant select on Circuito to rol_director_deportivo
@@ -1309,13 +1141,9 @@ grant select on vw_estado_piezas to rol_director_deportivo
 grant execute on usp_cargar_resultado to rol_director_deportivo
 grant execute on usp_inscribir_piloto to rol_director_deportivo
 grant execute on dbo.fn_puntos_piloto to rol_director_deportivo
-deny update, delete on GranPremio to rol_director_deportivo
 deny insert, update, delete on Resultado to rol_director_deportivo
 deny insert, update, delete on Inscripcion to rol_director_deportivo
 deny select on Contrato to rol_director_deportivo
-deny select on AuditoriaContrato to rol_director_deportivo
-deny select on Gasto to rol_director_deportivo
-
 
 grant select on GranPremio to rol_ingeniero_pista
 grant select on Inscripcion to rol_ingeniero_pista
@@ -1330,13 +1158,8 @@ grant select on dbo.fn_piezas_piloto to rol_ingeniero_pista
 grant execute on dbo.fn_km_restantes to rol_ingeniero_pista
 grant execute on usp_cerrar_gp to rol_ingeniero_pista
 grant execute on usp_retirar_componente to rol_ingeniero_pista
-deny update, delete on UsoComponente to rol_ingeniero_pista
 deny insert, update, delete on Componente to rol_ingeniero_pista
-deny insert, update, delete on Penalizacion to rol_ingeniero_pista
-deny insert, update, delete on GranPremio to rol_ingeniero_pista
 deny select on Contrato to rol_ingeniero_pista
-deny select on Gasto to rol_ingeniero_pista
-
 
 grant select on Pais to rol_rrhh
 grant select on Puesto to rol_rrhh
@@ -1346,10 +1169,6 @@ grant select, insert, update on Contrato to rol_rrhh
 grant select on AuditoriaContrato to rol_rrhh
 grant select on vw_nomina to rol_rrhh
 grant execute on dbo.fn_contrato_vigente to rol_rrhh
-deny delete on Contrato to rol_rrhh
-deny insert, update, delete on AuditoriaContrato to rol_rrhh
-deny select on Gasto to rol_rrhh
-
 
 grant select on Pais to rol_finanzas
 grant select on CategoriaGasto to rol_finanzas
@@ -1364,11 +1183,8 @@ grant execute on dbo.fn_gasto_computable to rol_finanzas
 grant execute on usp_registrar_compra to rol_finanzas
 grant execute on usp_registrar_gasto to rol_finanzas
 deny insert, update, delete on Gasto to rol_finanzas
-deny insert, update, delete on AlertaTope to rol_finanzas
 deny insert, update, delete on Componente to rol_finanzas
 deny select on Contrato to rol_finanzas
-deny select on AuditoriaContrato to rol_finanzas
-
 
 grant select on Pais to rol_consulta
 grant select on Circuito to rol_consulta
@@ -1378,6 +1194,3 @@ grant select on Sesion to rol_consulta
 grant select on vw_puntos_equipo_por_gp to rol_consulta
 grant select on vw_nomina to rol_consulta
 deny select on Contrato to rol_consulta
-deny select on AuditoriaContrato to rol_consulta
-deny select on Gasto to rol_consulta
-deny select on vw_situacion_tope to rol_consulta

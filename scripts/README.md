@@ -12,7 +12,7 @@ Están numerados en el orden en que se ejecutan.
 | `06_triggers.sql` | Los cuatro triggers |
 | `07_seguridad.sql` | Logins, usuarios, roles y permisos |
 | `08_consultas.sql` | Las consultas y subconsultas del documento |
-| `99_pruebas.sql` | Prueba cada regla de negocio, cada error y los permisos de cada rol |
+| `09_pruebas.sql` | Prueba cada regla de negocio, cada error y los permisos de cada rol |
 | `TP_completo.sql` | Del 01 al 07 en un solo archivo |
 
 ## Cómo se corren
@@ -21,7 +21,7 @@ Lo más rápido es abrir `TP_completo.sql` en SSMS y apretar F5. Arma la base en
 
 También se pueden correr del 01 al 07 de a uno, en orden. Es lo que conviene mientras se trabaja en un área.
 
-Después, con la base recién armada, `08_consultas.sql` muestra las consultas con los resultados que figuran en el documento. `99_pruebas.sql` va al final porque cambia los datos (cierra Grandes Premios, carga compras). Cada prueba avisa con un `print` qué tiene que pasar, y si algo se acepta cuando no debería, imprime `MAL`.
+Después, con la base recién armada, `08_consultas.sql` muestra las consultas con los resultados que figuran en el documento. `09_pruebas.sql` va al final porque cambia los datos (cierra Grandes Premios, carga compras). Cada prueba avisa con un `print` qué tiene que pasar, y si algo se acepta cuando no debería, imprime `MAL`.
 
 ## TP_completo.sql
 
