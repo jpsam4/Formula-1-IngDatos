@@ -1,10 +1,7 @@
 ﻿use master
 
-if db_id('EscuderiaF1') is not null
-begin
-    alter database EscuderiaF1 set single_user with rollback immediate
+if exists (select * from sysdatabases where name = 'EscuderiaF1')
     drop database EscuderiaF1
-end
 
 create database EscuderiaF1
 go
@@ -26,10 +23,10 @@ create table Temporada (
 )
 
 create table TipoSesion (
-    id_tipo_sesion  int identity(1,1) not null,
-    nombre          nvarchar(40) not null,
-    es_sprint       bit not null constraint DF_TipoSesion_sprint default 0,
-    otorga_puntos   bit not null constraint DF_TipoSesion_puntos default 0,
+    id_tipo_sesion int identity(1,1) not null,
+    nombre nvarchar(40) not null,
+    es_sprint bit not null constraint DF_TipoSesion_sprint default 0,
+    otorga_puntos bit not null constraint DF_TipoSesion_puntos default 0,
     constraint PK_TipoSesion primary key (id_tipo_sesion),
     constraint UQ_TipoSesion_nombre unique (nombre)
 )
@@ -42,9 +39,9 @@ create table Puesto (
 )
 
 create table TipoComponente (
-    id_tipo       int identity(1,1) not null,
-    nombre        nvarchar(40) not null,
-    vida_util_km  decimal(10,2) not null,
+    id_tipo int identity(1,1) not null,
+    nombre nvarchar(40) not null,
+    vida_util_km decimal(10,2) not null,
     constraint PK_TipoComponente primary key (id_tipo),
     constraint UQ_TipoComponente_nombre unique (nombre),
     constraint CK_TipoComponente_vida check (vida_util_km > 0)
@@ -59,11 +56,11 @@ create table CategoriaGasto (
 
 
 create table Circuito (
-    id_circuito  int identity(1,1) not null,
-    nombre       nvarchar(80) not null,
-    ciudad       nvarchar(60) not null,
-    id_pais      int not null,
-    longitud_km  decimal(5,3) not null,
+    id_circuito int identity(1,1) not null,
+    nombre nvarchar(80) not null,
+    ciudad nvarchar(60) not null,
+    id_pais int not null,
+    longitud_km decimal(5,3) not null,
     constraint PK_Circuito primary key (id_circuito),
     constraint UQ_Circuito_nombre unique (nombre),
     constraint FK_Circuito_Pais
@@ -84,14 +81,14 @@ alter table Puntaje add
     constraint FK_Puntaje_TipoSesion foreign key (id_tipo_sesion) references TipoSesion (id_tipo_sesion)
 
 create table Empleado (
-    id_empleado       int identity(1,1) not null,
-    nombre            nvarchar(60) not null,
-    apellido          nvarchar(60) not null,
-    documento         nvarchar(20) not null,
-    fecha_nacimiento  date not null,
-    email             nvarchar(120) not null,
-    id_pais           int not null,
-    id_puesto         int not null,
+    id_empleado int identity(1,1) not null,
+    nombre nvarchar(60) not null,
+    apellido nvarchar(60) not null,
+    documento nvarchar(20) not null,
+    fecha_nacimiento date not null,
+    email nvarchar(120) not null,
+    id_pais int not null,
+    id_puesto int not null,
     constraint PK_Empleado primary key (id_empleado),
     constraint UQ_Empleado_documento unique (documento),
     constraint UQ_Empleado_email unique (email),
@@ -122,11 +119,11 @@ create table LimiteComponente (
 )
 
 create table Componente (
-    id_componente   int identity(1,1) not null,
-    id_tipo         int not null,
-    numero_serie    nvarchar(30) not null,
-    km_acumulados   decimal(10,2) not null constraint DF_Componente_km default 0,
-    estado          nvarchar(10) not null constraint DF_Componente_estado default 'Nuevo',
+    id_componente int identity(1,1) not null,
+    id_tipo int not null,
+    numero_serie nvarchar(30) not null,
+    km_acumulados decimal(10,2) not null constraint DF_Componente_km default 0,
+    estado nvarchar(10) not null constraint DF_Componente_estado default 'Nuevo',
     constraint PK_Componente primary key (id_componente),
     constraint UQ_Componente_serie unique (numero_serie),
     constraint FK_Componente_Tipo foreign key (id_tipo) references TipoComponente (id_tipo),
@@ -155,15 +152,15 @@ create table TopePresupuestario (
 
 
 create table GranPremio (
-    id_gp         int identity(1,1) not null,
-    anio          smallint not null,
-    ronda         tinyint not null,
-    id_circuito   int not null,
-    nombre        nvarchar(80) not null,
-    fecha_inicio  date not null,
-    fecha_fin     date not null,
-    es_sprint     bit not null constraint DF_GranPremio_sprint default 0,
-    cerrado       bit not null constraint DF_GranPremio_cerrado default 0,
+    id_gp int identity(1,1) not null,
+    anio smallint not null,
+    ronda tinyint not null,
+    id_circuito int not null,
+    nombre nvarchar(80) not null,
+    fecha_inicio date not null,
+    fecha_fin date not null,
+    es_sprint bit not null constraint DF_GranPremio_sprint default 0,
+    cerrado bit not null constraint DF_GranPremio_cerrado default 0,
     constraint PK_GranPremio primary key (id_gp),
     constraint FK_GranPremio_Temporada foreign key (anio) references Temporada (anio),
     constraint FK_GranPremio_Circuito foreign key (id_circuito) references Circuito (id_circuito),
@@ -201,13 +198,13 @@ create table Contrato (
 )
 
 create table Gasto (
-    id_gasto       int identity(1,1) not null,
-    fecha          date not null,
-    monto_usd      decimal(14,2) not null,
-    descripcion    nvarchar(200) not null,
-    id_categoria   int not null,
-    id_proveedor   int not null,
-    id_componente  int null,
+    id_gasto int identity(1,1) not null,
+    fecha date not null,
+    monto_usd decimal(14,2) not null,
+    descripcion nvarchar(200) not null,
+    id_categoria int not null,
+    id_proveedor int not null,
+    id_componente int null,
     constraint PK_Gasto primary key (id_gasto),
     constraint CK_Gasto_monto check (monto_usd > 0)
 )
@@ -215,10 +212,6 @@ create table Gasto (
 alter table Gasto add constraint FK_Gasto_Categoria foreign key (id_categoria) references CategoriaGasto (id_categoria)
 alter table Gasto add constraint FK_Gasto_Proveedor foreign key (id_proveedor) references Proveedor (id_proveedor)
 alter table Gasto add constraint FK_Gasto_Componente foreign key (id_componente) references Componente (id_componente)
-
-create unique index UX_Gasto_componente
-    on Gasto (id_componente)
-    where id_componente is not null
 
 
 
@@ -234,10 +227,10 @@ create table Sesion (
 )
 
 create table Inscripcion (
-    id_inscripcion  int identity(1,1) not null,
-    id_gp           int not null,
-    id_piloto       int not null,
-    id_chasis       int not null,
+    id_inscripcion int identity(1,1) not null,
+    id_gp int not null,
+    id_piloto int not null,
+    id_chasis int not null,
     constraint PK_Inscripcion primary key (id_inscripcion),
     constraint FK_Inscripcion_GranPremio foreign key (id_gp) references GranPremio (id_gp),
     constraint FK_Inscripcion_Piloto foreign key (id_piloto) references Piloto (id_empleado),
@@ -252,14 +245,14 @@ create table AuditoriaContrato (
     sueldo_anterior decimal(14,2) not null,
     sueldo_nuevo decimal(14,2) not null,
     fecha datetime2(0) not null constraint DF_Auditoria_fecha default getdate(),
-    usuario nvarchar(128) not null constraint DF_Auditoria_usuario default suser_sname()
+    usuario nvarchar(128) not null constraint DF_Auditoria_usuario default system_user
 )
 
 create table AlertaTope (
-    id_alerta            int identity(1,1) not null,
-    id_gasto             int not null,
-    fecha                datetime2(0) not null constraint DF_AlertaTope_fecha default getdate(),
-    gasto_acumulado_usd  decimal(14,2) not null,
+    id_alerta int identity(1,1) not null,
+    id_gasto int not null,
+    fecha datetime2(0) not null constraint DF_AlertaTope_fecha default getdate(),
+    gasto_acumulado_usd decimal(14,2) not null,
     constraint PK_AlertaTope primary key (id_alerta),
     constraint FK_AlertaTope_Gasto foreign key (id_gasto) references Gasto (id_gasto),
     constraint UQ_AlertaTope_gasto unique (id_gasto)
@@ -268,10 +261,10 @@ create table AlertaTope (
 
 
 create table Resultado (
-    id_sesion       int not null,
-    id_inscripcion  int not null,
-    posicion        tinyint null,
-    estado          nvarchar(15) not null,
+    id_sesion int not null,
+    id_inscripcion int not null,
+    posicion tinyint null,
+    estado nvarchar(15) not null,
     constraint PK_Resultado primary key (id_sesion, id_inscripcion),
     constraint FK_Resultado_Sesion foreign key (id_sesion) references Sesion (id_sesion),
     constraint FK_Resultado_Inscripcion foreign key (id_inscripcion) references Inscripcion (id_inscripcion),
@@ -283,8 +276,6 @@ create table Resultado (
     )
 )
 
-create unique index UX_Resultado_posicion on Resultado (id_sesion, posicion) where posicion is not null
-
 create table UsoComponente (
     id_componente int not null,
     id_inscripcion int not null,
@@ -295,12 +286,12 @@ create table UsoComponente (
 )
 
 create table Penalizacion (
-    id_penalizacion  int identity(1,1) not null,
-    id_inscripcion   int not null,
-    id_componente    int not null,
-    puestos_grilla   tinyint not null,
-    motivo           nvarchar(200) not null,
-    fecha            datetime2(0) not null constraint DF_Penalizacion_fecha default getdate(),
+    id_penalizacion int identity(1,1) not null,
+    id_inscripcion int not null,
+    id_componente int not null,
+    puestos_grilla tinyint not null,
+    motivo nvarchar(200) not null,
+    fecha datetime2(0) not null constraint DF_Penalizacion_fecha default getdate(),
     constraint PK_Penalizacion primary key (id_penalizacion),
     constraint FK_Penalizacion_Inscripcion foreign key (id_inscripcion) references Inscripcion (id_inscripcion),
     constraint FK_Penalizacion_Componente foreign key (id_componente) references Componente (id_componente),
@@ -393,23 +384,23 @@ insert into Puntaje (anio, id_tipo_sesion, posicion, puntos) values
 
 set identity_insert Empleado on
 insert into Empleado (id_empleado, nombre, apellido, documento, fecha_nacimiento, email, id_pais, id_puesto) values
-(1, 'Max', 'Verstappen', 'NLD-PX4471902', '1997-09-30', 'max.verstappen@redbullracing.com', 9, 1),
-(2, 'Isack', 'Hadjar', 'FRA-19FR83321', '2004-09-28', 'isack.hadjar@redbullracing.com', 10, 1),
-(3, 'Yuki', 'Tsunoda', 'JPN-TR8812045', '2000-05-11', 'yuki.tsunoda@redbullracing.com', 4, 1),
-(4, 'Santiago', 'Ferraro', 'ARG-46118203', '2006-02-14', 'santiago.ferraro@redbullracing.com', 1, 1),
-(5, 'Marc', 'Lenoir', 'FRA-14GH20551', '1976-11-02', 'marc.lenoir@redbullracing.com', 10, 2),
-(6, 'Hannah', 'Whitcombe', 'GBR-533820147', '1983-04-19', 'hannah.whitcombe@redbullracing.com', 11, 3),
-(7, 'Tomas', 'Ibarra', 'ARG-33456781', '1988-07-23', 'tomas.ibarra@redbullracing.com', 1, 5),
-(8, 'Oliver', 'Granger', 'GBR-541093328', '1985-01-30', 'oliver.granger@redbullracing.com', 11, 4),
-(9, 'Kenji', 'Morita', 'JPN-TK5520913', '1990-10-08', 'kenji.morita@redbullracing.com', 4, 6),
-(10, 'Stefan', 'Brandt', 'DEU-C01X88412', '1979-03-15', 'stefan.brandt@redbullracing.com', 13, 7),
-(11, 'Luca', 'Bernardi', 'ITA-YA7781203', '1994-12-01', 'luca.bernardi@redbullracing.com', 12, 8),
-(12, 'Sam', 'Fletcher', 'GBR-560211874', '1997-06-11', 'sam.fletcher@redbullracing.com', 11, 8),
-(13, 'Pieter', 'de Vries', 'NLD-NW3390218', '1991-08-27', 'pieter.devries@redbullracing.com', 9, 8),
-(14, 'Valentina', 'Ruiz', 'ESP-PAF661203', '1996-02-05', 'valentina.ruiz@redbullracing.com', 8, 9),
-(15, 'Claire', 'Dubois', 'FRA-12KD77310', '1987-05-21', 'claire.dubois@redbullracing.com', 10, 10),
-(16, 'Emma', 'Hartley', 'GBR-548870021', '1992-09-09', 'emma.hartley@redbullracing.com', 11, 11),
-(17, 'Julia', 'Steiner', 'AUT-P8812337', '1999-01-17', 'julia.steiner@redbullracing.com', 14, 12)
+(1, 'Max', 'Verstappen', '38455120', '1997-09-30', 'max.verstappen@redbullracing.com', 9, 1),
+(2, 'Isack', 'Hadjar', '45210877', '2004-09-28', 'isack.hadjar@redbullracing.com', 10, 1),
+(3, 'Yuki', 'Tsunoda', '41530296', '2000-05-11', 'yuki.tsunoda@redbullracing.com', 4, 1),
+(4, 'Santiago', 'Ferraro', '46118203', '2006-02-14', 'santiago.ferraro@redbullracing.com', 1, 1),
+(5, 'Mark', 'Wilson', '23871540', '1976-11-02', 'mark.wilson@redbullracing.com', 11, 2),
+(6, 'Laura', 'Bennett', '30447812', '1983-04-19', 'laura.bennett@redbullracing.com', 11, 3),
+(7, 'Tomas', 'Ibarra', '33456781', '1988-07-23', 'tomas.ibarra@redbullracing.com', 1, 5),
+(8, 'Ryan', 'Cooper', '31209933', '1985-01-30', 'ryan.cooper@redbullracing.com', 11, 4),
+(9, 'Daniel', 'Brown', '35118274', '1990-10-08', 'daniel.brown@redbullracing.com', 11, 6),
+(10, 'Paul', 'Harris', '26654091', '1979-03-15', 'paul.harris@redbullracing.com', 11, 7),
+(11, 'Lucas', 'Romero', '38992416', '1994-12-01', 'lucas.romero@redbullracing.com', 1, 8),
+(12, 'Jack', 'Taylor', '40731158', '1997-06-11', 'jack.taylor@redbullracing.com', 11, 8),
+(13, 'Ben', 'Walker', '34560127', '1991-08-27', 'ben.walker@redbullracing.com', 11, 8),
+(14, 'Sofia', 'Martinez', '39874401', '1996-02-05', 'sofia.martinez@redbullracing.com', 8, 9),
+(15, 'Emily', 'Turner', '32015586', '1987-05-21', 'emily.turner@redbullracing.com', 11, 10),
+(16, 'Sarah', 'Hughes', '36702219', '1992-09-09', 'sarah.hughes@redbullracing.com', 11, 11),
+(17, 'Julia', 'Mendez', '42183370', '1999-01-17', 'julia.mendez@redbullracing.com', 1, 12)
 set identity_insert Empleado off
 
 set identity_insert Chasis on
@@ -452,15 +443,15 @@ set identity_insert Componente off
 
 set identity_insert Proveedor on
 insert into Proveedor (id_proveedor, razon_social, identificacion_fiscal, id_pais) values
-(1, 'Tirreno Frenos S.p.A.', 'IT01987650214', 12),
-(2, 'Milton Composites Ltd', 'GB284113790', 11),
-(3, 'Logistica Austral S.A.', 'AR30712345679', 1),
-(4, 'Kanto Precision Electronics KK', 'JP7010401092', 4),
-(5, 'Bavaria Antriebstechnik GmbH', 'DE298765431', 13),
-(6, 'Northfield Wind Tunnel Ltd', 'GB301556782', 11),
-(7, 'Steirische Events GmbH', 'ATU71234567', 14),
-(8, 'Iberia Viajes Corporativos S.L.', 'ESB86543210', 8),
-(9, 'Hydra Fluidos S.A.S.', 'FR40512339871', 10)
+(1, 'Brembo', 'IT001', 12),
+(2, 'Red Bull Advanced Technologies', 'GB002', 11),
+(3, 'DHL', 'DE003', 13),
+(4, 'Ford', 'US004', 5),
+(5, 'Red Bull Powertrains', 'GB005', 11),
+(6, 'Toyota Gazoo Racing Europe', 'DE006', 13),
+(7, 'Do & Co', 'AT007', 14),
+(8, 'Iberia', 'ES008', 8),
+(9, 'Mobil 1', 'US009', 5)
 set identity_insert Proveedor off
 
 insert into TopePresupuestario (anio, monto_usd, umbral_alerta_pct) values
@@ -638,9 +629,7 @@ begin
     inner join Sesion s on s.id_sesion = r.id_sesion
     inner join GranPremio g on g.id_gp = s.id_gp
     inner join Inscripcion i on i.id_inscripcion = r.id_inscripcion
-    inner join Puntaje p on p.anio = g.anio
-                        and p.id_tipo_sesion = s.id_tipo_sesion
-                        and p.posicion = r.posicion
+    inner join Puntaje p on p.anio = g.anio and p.id_tipo_sesion = s.id_tipo_sesion and p.posicion = r.posicion
     where i.id_piloto = @idpiloto
       and g.anio = @anio
 
@@ -729,9 +718,7 @@ from (
     from GranPremio g
     inner join Sesion s on s.id_gp = g.id_gp
     inner join Resultado r on r.id_sesion = s.id_sesion
-    left join Puntaje p on p.anio = g.anio
-                       and p.id_tipo_sesion = s.id_tipo_sesion
-                       and p.posicion = r.posicion
+    left join Puntaje p on p.anio = g.anio and p.id_tipo_sesion = s.id_tipo_sesion and p.posicion = r.posicion
     group by g.anio, g.ronda, g.nombre
 ) x
 go
@@ -798,16 +785,19 @@ begin
         select @gpinsc = id_gp from Inscripcion where id_inscripcion = @idinsc
 
         if @gpsesion is null
-            raiserror('la sesion %d no existe', 16, 1, @idsesion)
+            raiserror('la sesion no existe', 16, 1)
 
         if @gpinsc is null
-            raiserror('la inscripcion %d no existe', 16, 1, @idinsc)
+            raiserror('la inscripcion no existe', 16, 1)
 
         if @gpsesion <> @gpinsc
-            raiserror('la inscripcion %d no es del Gran Premio de la sesion %d (RN10)', 16, 1, @idinsc, @idsesion)
+            raiserror('la inscripcion no es del mismo Gran Premio que la sesion', 16, 1)
 
         if exists (select 1 from Resultado where id_sesion = @idsesion and id_inscripcion = @idinsc)
-            raiserror('ese piloto ya tiene un resultado cargado en la sesion %d', 16, 1, @idsesion)
+            raiserror('ese piloto ya tiene un resultado cargado en la sesion', 16, 1)
+
+        if @pos is not null and exists (select 1 from Resultado where id_sesion = @idsesion and posicion = @pos)
+            raiserror('esa posicion ya la tiene otro piloto en la sesion', 16, 1)
 
         begin transaction
 
@@ -846,23 +836,23 @@ begin
         where id_gp = @idgp
 
         if @fecha is null
-            raiserror('el Gran Premio %d no existe', 16, 1, @idgp)
+            raiserror('el Gran Premio no existe', 16, 1)
 
         if @cerrado = 1
-            raiserror('el Gran Premio %d ya esta cerrado', 16, 1, @idgp)
+            raiserror('el Gran Premio ya esta cerrado', 16, 1)
 
         if not exists (select 1 from Piloto where id_empleado = @idpiloto)
-            raiserror('el piloto %d no existe', 16, 1, @idpiloto)
+            raiserror('el piloto no existe', 16, 1)
 
         if dbo.fn_contrato_vigente(@idpiloto, @fecha) is null
-            raiserror('el piloto %d no tiene contrato vigente en la fecha del Gran Premio (RN04)', 16, 1, @idpiloto)
+            raiserror('el piloto no tiene contrato vigente en la fecha del Gran Premio', 16, 1)
 
         select @cant = count(*) from Inscripcion where id_gp = @idgp
         if @cant >= 2
-            raiserror('el Gran Premio %d ya tiene dos pilotos inscriptos (RN03)', 16, 1, @idgp)
+            raiserror('el Gran Premio ya tiene dos pilotos inscriptos', 16, 1)
 
         if not exists (select 1 from Chasis where id_chasis = @idchasis and anio = @anio)
-            raiserror('el chasis %d no existe o no es de la temporada del Gran Premio (RN06)', 16, 1, @idchasis)
+            raiserror('el chasis no existe o no es de la temporada del Gran Premio', 16, 1)
 
         begin transaction
 
@@ -872,7 +862,7 @@ begin
         commit transaction
 
         print 'piloto ' + cast(@idpiloto as varchar(10)) + ' inscripto en el GP ' + cast(@idgp as varchar(10))
-            + ' (inscripcion ' + cast(scope_identity() as varchar(10)) + ')'
+            + ' (inscripcion ' + cast(@@identity as varchar(10)) + ')'
         return 0
     end try
     begin catch
@@ -929,10 +919,10 @@ begin
 
     begin try
         if not exists (select 1 from GranPremio where id_gp = @idgp)
-            raiserror('el Gran Premio %d no existe', 16, 1, @idgp)
+            raiserror('el Gran Premio no existe', 16, 1)
 
         if exists (select 1 from GranPremio where id_gp = @idgp and cerrado = 1)
-            raiserror('el Gran Premio %d ya estaba cerrado (RN15)', 16, 1, @idgp)
+            raiserror('el Gran Premio ya estaba cerrado', 16, 1)
 
         begin transaction
 
@@ -952,17 +942,17 @@ begin
                 estado = case when estado = 'Nuevo' then 'En uso' else estado end
             where id_componente = @idcomp
 
-            if exists (select 1
-                       from Componente c
-                       inner join TipoComponente t on t.id_tipo = c.id_tipo
-                       where c.id_componente = @idcomp
-                         and c.km_acumulados >= t.vida_util_km
-                         and c.estado <> 'Retirado')
+            if exists (
+                select 1
+                from Componente c
+                inner join TipoComponente t on t.id_tipo = c.id_tipo
+                where c.id_componente = @idcomp and c.km_acumulados >= t.vida_util_km and c.estado <> 'Retirado'
+            )
             begin
                 exec @r = usp_retirar_componente @idcomp = @idcomp
 
                 if @r <> 0
-                    raiserror('no se pudo retirar la pieza %d', 16, 1, @idcomp)
+                    raiserror('no se pudo retirar una de las piezas', 16, 1)
 
                 set @retiradas = @retiradas + 1
             end
@@ -1010,27 +1000,27 @@ begin
             raiserror('el monto de la compra tiene que ser mayor a 0', 16, 1)
 
         if not exists (select 1 from TipoComponente where id_tipo = @idtipo)
-            raiserror('el tipo de pieza %d no existe', 16, 1, @idtipo)
+            raiserror('el tipo de pieza no existe', 16, 1)
 
         if not exists (select 1 from CategoriaGasto where id_categoria = @idcat)
-            raiserror('la categoria %d no existe', 16, 1, @idcat)
+            raiserror('la categoria no existe', 16, 1)
 
         if not exists (select 1 from Proveedor where id_proveedor = @idprov)
-            raiserror('el proveedor %d no existe', 16, 1, @idprov)
+            raiserror('el proveedor no existe', 16, 1)
 
         begin transaction
 
         insert into Componente (id_tipo, numero_serie)
         values (@idtipo, @serie)
 
-        set @idcomp = scope_identity()
+        set @idcomp = @@identity
 
         insert into Gasto (fecha, monto_usd, descripcion, id_categoria, id_proveedor, id_componente)
         values (@fecha, @monto, @descr, @idcat, @idprov, @idcomp)
 
         commit transaction
 
-        print 'compra registrada: pieza ' + @serie + ' (id ' + cast(@idcomp as varchar(10)) + '), gasto ' + cast(scope_identity() as varchar(10))
+        print 'compra registrada: pieza ' + @serie + ' (id ' + cast(@idcomp as varchar(10)) + ')'
         return 0
     end try
     begin catch
@@ -1059,10 +1049,10 @@ begin
             raiserror('el monto del gasto tiene que ser mayor a 0', 16, 1)
 
         if not exists (select 1 from CategoriaGasto where id_categoria = @idcat)
-            raiserror('la categoria %d no existe', 16, 1, @idcat)
+            raiserror('la categoria no existe', 16, 1)
 
         if not exists (select 1 from Proveedor where id_proveedor = @idprov)
-            raiserror('el proveedor %d no existe', 16, 1, @idprov)
+            raiserror('el proveedor no existe', 16, 1)
 
         begin transaction
 
@@ -1071,7 +1061,7 @@ begin
 
         commit transaction
 
-        print 'gasto registrado (id ' + cast(scope_identity() as varchar(10)) + ')'
+        print 'gasto registrado'
         return 0
     end try
     begin catch
@@ -1100,7 +1090,7 @@ begin
     )
     begin
         rollback transaction
-        raiserror('no se puede cargar una sesion sprint en un Gran Premio sin formato sprint (RN01)', 16, 1)
+        raiserror('no se puede cargar una sesion sprint en un Gran Premio sin formato sprint', 16, 1)
         return
     end
 
@@ -1112,7 +1102,7 @@ begin
     )
     begin
         rollback transaction
-        raiserror('la fecha de la sesion esta fuera del fin de semana del Gran Premio (RN02)', 16, 1)
+        raiserror('la fecha de la sesion esta fuera del fin de semana del Gran Premio', 16, 1)
         return
     end
 end
@@ -1128,32 +1118,30 @@ begin
     if exists (
         select 1
         from inserted i
-        inner join Contrato c on c.id_empleado = i.id_empleado
-                             and c.id_contrato <> i.id_contrato
+        inner join Contrato c on c.id_empleado = i.id_empleado and c.id_contrato <> i.id_contrato
         where c.fecha_inicio <= isnull(i.fecha_fin, '9999-12-31')
           and i.fecha_inicio <= isnull(c.fecha_fin, '9999-12-31')
     )
     begin
         rollback transaction
-        raiserror('el empleado ya tiene un contrato que se superpone con esas fechas (RN07)', 16, 1)
+        raiserror('el empleado ya tiene un contrato que se superpone con esas fechas', 16, 1)
         return
     end
 
     if exists (select 1 from inserted i
-               where i.condicion is not null
-                 and not exists (select 1 from Piloto p where p.id_empleado = i.id_empleado))
+        where i.condicion is not null and i.id_empleado not in (select id_empleado from Piloto))
     begin
         rollback transaction
-        raiserror('solo el contrato de un piloto dice si es titular o reserva (RN08)', 16, 1)
+        raiserror('solo el contrato de un piloto dice si es titular o reserva', 16, 1)
         return
     end
 
     if exists (select 1 from inserted i
-               inner join Piloto p on p.id_empleado = i.id_empleado
-               where i.condicion is null)
+        inner join Piloto p on p.id_empleado = i.id_empleado
+        where i.condicion is null)
     begin
         rollback transaction
-        raiserror('el contrato de un piloto tiene que decir si es titular o reserva (RN08)', 16, 1)
+        raiserror('el contrato de un piloto tiene que decir si es titular o reserva', 16, 1)
         return
     end
 
@@ -1172,64 +1160,53 @@ as
 begin
     set nocount on
 
-    if exists (select 1
-               from inserted i
-               inner join Componente c on c.id_componente = i.id_componente
-               where c.estado in ('Retirado', 'Danado'))
+    if exists (
+        select 1
+        from inserted i
+        inner join Componente c on c.id_componente = i.id_componente
+        where c.estado in ('Retirado', 'Danado')
+    )
     begin
         rollback transaction
-        raiserror('no se puede usar una pieza retirada o danada (RN16)', 16, 1)
+        raiserror('no se puede usar una pieza retirada o danada', 16, 1)
         return
     end
 
-    if exists (select 1
-               from inserted i
-               inner join Inscripcion ins on ins.id_inscripcion = i.id_inscripcion
-               inner join GranPremio g on g.id_gp = ins.id_gp
-               where g.cerrado = 1)
+    if exists (
+        select 1
+        from inserted i
+        inner join Inscripcion ins on ins.id_inscripcion = i.id_inscripcion
+        inner join GranPremio g on g.id_gp = ins.id_gp
+        where g.cerrado = 1
+    )
     begin
         rollback transaction
-        raiserror('el Gran Premio ya esta cerrado y no acepta mas usos de piezas (RN15)', 16, 1)
+        raiserror('el Gran Premio ya esta cerrado y no acepta mas usos de piezas', 16, 1)
         return
     end
-
-    declare @nuevas table (id_componente int, id_inscripcion int)
-
-    insert into @nuevas (id_componente, id_inscripcion)
-    select i.id_componente, min(i.id_inscripcion)
-    from inserted i
-    where not exists (select 1
-                      from UsoComponente u
-                      where u.id_componente = i.id_componente
-                        and u.id_inscripcion not in (select x.id_inscripcion from inserted x
-                                                     where x.id_componente = u.id_componente))
-    group by i.id_componente
 
     insert into Penalizacion (id_inscripcion, id_componente, puestos_grilla, motivo)
     select x.id_inscripcion, x.id_componente,
-           case when x.numero = x.cantidad_max + 1 then 10 else 5 end,
-           cast(x.numero as varchar(5)) + ' ' + x.tipo + ' usados en la temporada y el limite es ' + cast(x.cantidad_max as varchar(5))
+           case when x.usadas = x.cantidad_max + 1 then 10 else 5 end,
+           cast(x.usadas as varchar(5)) + ' ' + x.tipo + ' usados en la temporada y el limite es ' + cast(x.cantidad_max as varchar(5))
     from (
-        select n.id_componente, n.id_inscripcion, t.nombre as tipo, l.cantidad_max,
+        select i.id_inscripcion, i.id_componente, t.nombre as tipo, l.cantidad_max,
                (select count(distinct u.id_componente)
                 from UsoComponente u
                 inner join Inscripcion i2 on i2.id_inscripcion = u.id_inscripcion
                 inner join GranPremio g2 on g2.id_gp = i2.id_gp
                 inner join Componente c2 on c2.id_componente = u.id_componente
-                where i2.id_piloto = ins.id_piloto
-                  and g2.anio = g.anio
-                  and c2.id_tipo = c.id_tipo
-                  and u.id_componente not in (select id_componente from @nuevas))
-               + row_number() over (partition by ins.id_piloto, g.anio, c.id_tipo
-                                    order by n.id_inscripcion, n.id_componente) as numero
-        from @nuevas n
-        inner join Inscripcion ins on ins.id_inscripcion = n.id_inscripcion
+                where i2.id_piloto = ins.id_piloto and g2.anio = g.anio and c2.id_tipo = c.id_tipo
+                and (u.id_componente <= i.id_componente or u.id_componente not in (select id_componente from inserted))) as usadas
+        from inserted i
+        inner join Inscripcion ins on ins.id_inscripcion = i.id_inscripcion
         inner join GranPremio g on g.id_gp = ins.id_gp
-        inner join Componente c on c.id_componente = n.id_componente
+        inner join Componente c on c.id_componente = i.id_componente
         inner join TipoComponente t on t.id_tipo = c.id_tipo
         inner join LimiteComponente l on l.anio = g.anio and l.id_tipo = c.id_tipo
+        where (select count(*) from UsoComponente u where u.id_componente = i.id_componente) = 1
     ) x
-    where x.numero > x.cantidad_max
+    where x.usadas > x.cantidad_max
 end
 go
 
@@ -1240,72 +1217,73 @@ as
 begin
     set nocount on
 
-    if exists (select 1 from inserted i
-               where not exists (select 1 from TopePresupuestario t where t.anio = year(i.fecha)))
+    if exists (select 1 from inserted where year(fecha) not in (select anio from TopePresupuestario))
     begin
         rollback transaction
-        raiserror('no hay tope presupuestario cargado para el anio del gasto (RN19)', 16, 1)
+        raiserror('no hay tope presupuestario cargado para el anio del gasto', 16, 1)
         return
     end
 
-    if exists (select 1
-               from TopePresupuestario t
-               where t.anio in (select year(fecha) from inserted)
-                 and dbo.fn_gasto_computable(t.anio) > t.monto_usd)
+    if exists (
+        select 1
+        from inserted i
+        inner join Gasto g on g.id_componente = i.id_componente and g.id_gasto <> i.id_gasto
+    )
     begin
         rollback transaction
-        raiserror('el gasto hace pasar el tope presupuestario del anio (RN19)', 16, 1)
+        raiserror('esa pieza ya tiene un gasto de compra', 16, 1)
         return
     end
 
-    if not exists (select 1 from deleted)
+    if exists (
+        select 1
+        from TopePresupuestario t
+        where t.anio in (select year(fecha) from inserted)
+          and dbo.fn_gasto_computable(t.anio) > t.monto_usd
+    )
     begin
-        insert into AlertaTope (id_gasto, gasto_acumulado_usd)
-        select x.id_gasto, x.acumulado
-        from (
-            select i.id_gasto, i.monto_usd,
-                   t.monto_usd * t.umbral_alerta_pct / 100 as limite,
-                   dbo.fn_gasto_computable(t.anio)
-                     - sum(i.monto_usd) over (partition by t.anio)
-                     + sum(i.monto_usd) over (partition by t.anio order by i.id_gasto
-                                         rows between unbounded preceding and current row) as acumulado
-            from inserted i
-            inner join CategoriaGasto c on c.id_categoria = i.id_categoria
-            inner join TopePresupuestario t on t.anio = year(i.fecha)
-            where c.computa_tope = 1
-        ) x
-        where x.acumulado >= x.limite
-          and x.acumulado - x.monto_usd < x.limite
+        rollback transaction
+        raiserror('el gasto hace pasar el tope presupuestario del anio', 16, 1)
+        return
     end
+
+    insert into AlertaTope (id_gasto, gasto_acumulado_usd)
+    select max(i.id_gasto), dbo.fn_gasto_computable(t.anio)
+    from inserted i
+    inner join TopePresupuestario t on t.anio = year(i.fecha)
+    where dbo.fn_gasto_computable(t.anio) >= t.monto_usd * t.umbral_alerta_pct / 100
+      and not exists (select 1 from AlertaTope a inner join Gasto g on g.id_gasto = a.id_gasto where year(g.fecha) = t.anio)
+    group by t.anio
 end
 go
 
 use master
 
-if not exists (select 1 from sys.server_principals where name = 'login_director')
-    create login login_director with password = 'Rbr-Director-2026'
-if not exists (select 1 from sys.server_principals where name = 'login_ingeniero')
-    create login login_ingeniero with password = 'Rbr-Ingeniero-2026'
-if not exists (select 1 from sys.server_principals where name = 'login_rrhh')
-    create login login_rrhh with password = 'Rbr-Rrhh-2026'
-if not exists (select 1 from sys.server_principals where name = 'login_finanzas')
-    create login login_finanzas with password = 'Rbr-Finanzas-2026'
-if not exists (select 1 from sys.server_principals where name = 'login_consulta')
-    create login login_consulta with password = 'Rbr-Consulta-2026'
+if exists (select * from syslogins where name = 'login_director') drop login login_director
+if exists (select * from syslogins where name = 'login_ingeniero') drop login login_ingeniero
+if exists (select * from syslogins where name = 'login_rrhh') drop login login_rrhh
+if exists (select * from syslogins where name = 'login_finanzas') drop login login_finanzas
+if exists (select * from syslogins where name = 'login_consulta') drop login login_consulta
+
+create login login_director with password = 'Rbr-Director-2026'
+create login login_ingeniero with password = 'Rbr-Ingeniero-2026'
+create login login_rrhh with password = 'Rbr-Rrhh-2026'
+create login login_finanzas with password = 'Rbr-Finanzas-2026'
+create login login_consulta with password = 'Rbr-Consulta-2026'
 
 use EscuderiaF1
 
-if database_principal_id('rol_director_deportivo') is null create role rol_director_deportivo
-if database_principal_id('rol_ingeniero_pista') is null create role rol_ingeniero_pista
-if database_principal_id('rol_rrhh') is null create role rol_rrhh
-if database_principal_id('rol_finanzas') is null create role rol_finanzas
-if database_principal_id('rol_consulta') is null create role rol_consulta
+create user usr_director for login login_director
+create user usr_ingeniero for login login_ingeniero
+create user usr_rrhh for login login_rrhh
+create user usr_finanzas for login login_finanzas
+create user usr_consulta for login login_consulta
 
-if database_principal_id('usr_director') is null create user usr_director for login login_director
-if database_principal_id('usr_ingeniero') is null create user usr_ingeniero for login login_ingeniero
-if database_principal_id('usr_rrhh') is null create user usr_rrhh for login login_rrhh
-if database_principal_id('usr_finanzas') is null create user usr_finanzas for login login_finanzas
-if database_principal_id('usr_consulta') is null create user usr_consulta for login login_consulta
+create role rol_director_deportivo
+create role rol_ingeniero_pista
+create role rol_rrhh
+create role rol_finanzas
+create role rol_consulta
 
 alter role rol_director_deportivo add member usr_director
 alter role rol_ingeniero_pista add member usr_ingeniero
@@ -1325,14 +1303,13 @@ grant select on Resultado to rol_director_deportivo
 grant select on Inscripcion to rol_director_deportivo
 grant select, insert, update on Sesion to rol_director_deportivo
 grant select, insert on GranPremio to rol_director_deportivo
-grant update (ronda, id_circuito, nombre, fecha_inicio, fecha_fin, es_sprint) on GranPremio to rol_director_deportivo
 grant select on vw_puntos_equipo_por_gp to rol_director_deportivo
 grant select on vw_nomina to rol_director_deportivo
 grant select on vw_estado_piezas to rol_director_deportivo
 grant execute on usp_cargar_resultado to rol_director_deportivo
 grant execute on usp_inscribir_piloto to rol_director_deportivo
 grant execute on dbo.fn_puntos_piloto to rol_director_deportivo
-deny update (cerrado) on GranPremio to rol_director_deportivo
+deny update, delete on GranPremio to rol_director_deportivo
 deny insert, update, delete on Resultado to rol_director_deportivo
 deny insert, update, delete on Inscripcion to rol_director_deportivo
 deny select on Contrato to rol_director_deportivo
@@ -1356,7 +1333,7 @@ grant execute on usp_retirar_componente to rol_ingeniero_pista
 deny update, delete on UsoComponente to rol_ingeniero_pista
 deny insert, update, delete on Componente to rol_ingeniero_pista
 deny insert, update, delete on Penalizacion to rol_ingeniero_pista
-deny update (cerrado) on GranPremio to rol_ingeniero_pista
+deny insert, update, delete on GranPremio to rol_ingeniero_pista
 deny select on Contrato to rol_ingeniero_pista
 deny select on Gasto to rol_ingeniero_pista
 

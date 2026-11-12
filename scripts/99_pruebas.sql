@@ -82,7 +82,7 @@ print '===== 5. resultados'
 print '--- esperado: bien'
 exec usp_cargar_resultado @idsesion = 33, @idinsc = @inscver, @pos = 1
 
-print '--- esperado: error, posicion repetida en la sesion (RN11, indice unico)'
+print '--- esperado: error, posicion repetida en la sesion (RN11)'
 exec usp_cargar_resultado @idsesion = 33, @idinsc = @inschad, @pos = 1
 
 print '--- esperado: error, Finalizo sin posicion (RN11, CHECK)'
@@ -252,7 +252,7 @@ begin catch
     print 'error esperado: ' + error_message()
 end catch
 
-print '--- esperado: bien, vuelve de Vries'
+print '--- esperado: bien, vuelve Walker'
 insert into Contrato (id_empleado, fecha_inicio, fecha_fin, sueldo_mensual_usd, condicion)
 values (13, '2026-07-01', null, 8500, null)
 
