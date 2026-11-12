@@ -4,7 +4,7 @@ Las acordamos antes de escribir SQL para que el script final no parezca escrito 
 
 ## Motor
 
-SQL Server 2019 o posterior. Lo pedimos así porque usamos `CREATE OR ALTER`, que no existe en versiones mas viejas. Nosotros lo probamos en SQL Server 2025.
+SQL Server 2019 o posterior.
 
 La base se llama `EscuderiaF1`.
 
