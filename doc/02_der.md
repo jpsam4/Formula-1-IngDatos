@@ -13,7 +13,7 @@ Usamos la notación de Chen que vimos en clase.
 - El triángulo es una especialización ("es un").
 - En las páginas por área, las cajas grises punteadas son entidades de otra área. Están para que se vea con quién se conecta, sus atributos aparecen en su propia página.
 
-Las cardinalidades van a cada lado del rombo, con 1, N o M. Se leen cruzando: en "GranPremio 1 — tiene — N Sesion" un Gran Premio tiene N sesiones y cada sesión es de 1 Gran Premio. Si los dos lados son muchos se pone N y M.
+Las cardinalidades van a cada lado del rombo, con 1, N o M. Se leen cruzando: en "GranPremio 1 - tiene - N Sesion" un Gran Premio tiene N sesiones y cada sesión es de 1 Gran Premio. Si los dos lados son muchos se pone N y M.
 
 En "admite" pusimos 2 en vez de N porque un Gran Premio admite como mucho dos inscripciones (los dos autos del equipo).
 
