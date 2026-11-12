@@ -2,10 +2,10 @@
 
 TP integrador de Ingeniería de Datos I (segundo cuatrimestre 2026, prof. Alejandro Feichubuinm).
 
-es la base de datos para la gestión interna de una sola escudería de F1, Red Bull Racing, hecha en SQL Server. guarda cuatro cosas:
+Es la base de datos para la gestión interna de una sola escudería de F1, Red Bull Racing, hecha en SQL Server. Guarda cuatro cosas:
 
 - La parte deportiva: Grandes Premios, sesiones, resultados y puntos.
-- el personal: empleados, pilotos y contratos.
+- El personal: empleados, pilotos y contratos.
 - La parte técnica: chasis, piezas, cuánto se usó cada una y las penalizaciones por pasarse del límite
 - Las finanzas: gastos, proveedores y el tope de gasto anual.
 
@@ -31,7 +31,7 @@ doc/der/    el DER en draw.io y sus imagenes
 scripts/    los scripts SQL, numerados en el orden en que se ejecutan
 ```
 
-avance del documento:
+Avance del documento:
 
 | Sección | Archivo | Estado |
 |---|---|---|
@@ -42,19 +42,19 @@ avance del documento:
 | Consultas, vistas, procedimientos, triggers, cursor, funciones | | pendiente |
 | Manejo de errores, seguridad, conclusiones | | pendiente |
 
-Las convenciones de nombres, tipos y códigos de error estan en [doc/convenciones.md](doc/convenciones.md). leerlas antes de escribir la primera tabla porfa.
+Las convenciones de nombres, tipos y códigos de error estan en [doc/convenciones.md](doc/convenciones.md). Leerlas antes de escribir la primera tabla porfa.
 
 ## Cómo trabajamos con Git
 
 1. Cada uno trabaja en su branch, con el área y su nombre: `tecnica-juan`, `finanzas-joaquin`.
-2. Se commitea a medida que se avanza, no todo junto al final. el enunciado pide que cada integrante tenga trabajo real en su branch.
+2. Se commitea a medida que se avanza, no todo junto al final. El enunciado pide que cada integrante tenga trabajo real en su branch.
 3. Cuando algo funciona se abre un pull request a `main`. El integrador lo revisa y lo mergea.
 4. En `main` solo entra lo que corre.
 
 
 ## Cómo armar la base
 
-todavía no hay scripts. Cuando estén, se ejecutan en este orden sobre SQL Server 2019 o posterior:
+Todavía no hay scripts. Cuando estén, se ejecutan en este orden sobre SQL Server 2019 o posterior:
 
 1. `scripts/01_estructura.sql`
 2. `scripts/02_datos.sql`
