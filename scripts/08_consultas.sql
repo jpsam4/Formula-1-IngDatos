@@ -49,7 +49,15 @@ having sum(p.puntos) > 50
 order by puntos desc
 
 
-print 'consulta 4: gente y sueldos por departamento, con contrato vigente hoy'
+print 'consulta 4: circuitos que no estan en el calendario 2026'
+
+select c.nombre as circuito, c.ciudad
+from GranPremio g
+right join Circuito c on c.id_circuito = g.id_circuito and g.anio = 2026
+where g.id_gp is null
+
+
+print 'consulta 5: gente y sueldos por departamento, con contrato vigente hoy'
 
 select pu.departamento, count(*) as empleados, sum(c.sueldo_mensual_usd) as sueldos_mensuales_usd,
        cast(avg(c.sueldo_mensual_usd) as decimal(14,2)) as sueldo_promedio_usd
@@ -62,7 +70,7 @@ group by pu.departamento
 order by sueldos_mensuales_usd desc
 
 
-print 'consulta 5: contratos que se vencen en los proximos 6 meses'
+print 'consulta 6: contratos que se vencen en los proximos 6 meses'
 
 select e.apellido, e.nombre, pu.nombre as puesto, c.fecha_fin,
        datediff(day, getdate(), c.fecha_fin) as dias_que_faltan
@@ -73,7 +81,7 @@ where c.fecha_fin between cast(getdate() as date) and dateadd(month, 6, getdate(
 order by c.fecha_fin
 
 
-print 'consulta 6: cuantos anios lleva cada empleado en la escuderia'
+print 'consulta 7: cuantos anios lleva cada empleado en la escuderia'
 
 select e.apellido, e.nombre, min(c.fecha_inicio) as primer_contrato,
        datediff(year, min(c.fecha_inicio), getdate()) as anios
@@ -83,7 +91,7 @@ group by e.id_empleado, e.apellido, e.nombre
 order by primer_contrato
 
 
-print 'consulta 7: penalizaciones de grilla de 2026'
+print 'consulta 8: penalizaciones de grilla de 2026'
 
 select g.ronda, g.nombre as gran_premio, e.apellido as piloto, t.nombre as tipo_pieza,
        c.numero_serie, p.puestos_grilla, p.motivo
@@ -97,7 +105,7 @@ where g.anio = 2026
 order by g.ronda
 
 
-print 'consulta 8: pilotos que en 2026 estan a una pieza del limite de algun tipo o ya lo pasaron'
+print 'consulta 9: pilotos que en 2026 estan a una pieza del limite de algun tipo o ya lo pasaron'
 
 select e.apellido as piloto, t.nombre as tipo_pieza, l.cantidad_max as limite,
        count(distinct u.id_componente) as piezas_usadas, sum(u.km_recorridos) as km
@@ -114,15 +122,17 @@ having count(distinct u.id_componente) >= l.cantidad_max - 1
 order by piezas_usadas desc
 
 
-print 'consulta 9: circuitos que no estan en el calendario 2026'
+print 'consulta 10: cuantas piezas hay de cada tipo y en que estado'
 
-select c.nombre as circuito, c.ciudad
-from GranPremio g
-right join Circuito c on c.id_circuito = g.id_circuito and g.anio = 2026
-where g.id_gp is null
+select t.nombre as tipo, c.estado, count(*) as piezas,
+       sum(c.km_acumulados) as km_totales
+from Componente c
+inner join TipoComponente t on t.id_tipo = c.id_tipo
+group by t.nombre, c.estado
+order by t.nombre, c.estado
 
 
-print 'consulta 10: gasto por categoria en 2026 y si cuenta para el tope'
+print 'consulta 11: gasto por categoria en 2026 y si cuenta para el tope'
 
 select cg.nombre as categoria,
        case when cg.computa_tope = 1 then 'si' else 'no' end as cuenta_tope,
@@ -134,7 +144,7 @@ group by cg.nombre, cg.computa_tope
 order by total_usd desc
 
 
-print 'consulta 11: proveedores a los que les compramos mas de 10 millones en 2026'
+print 'consulta 12: proveedores a los que les compramos mas de 10 millones en 2026'
 
 select pr.razon_social, pa.nombre as pais, count(*) as compras, sum(g.monto_usd) as total_usd
 from Gasto g
@@ -146,7 +156,7 @@ having sum(g.monto_usd) > 10000000
 order by total_usd desc
 
 
-print 'consulta 12: alertas del tope, con el gasto que las disparo'
+print 'consulta 13: alertas del tope, con el gasto que las disparo'
 
 select year(g.fecha) as anio, a.fecha as fecha_alerta, g.descripcion, pr.razon_social,
        g.monto_usd, a.gasto_acumulado_usd, t.monto_usd as tope_usd
@@ -158,21 +168,7 @@ order by anio
 
 
 
-print 'subconsulta 1: pilotos que no corrieron ningun GP en 2026'
-
-select e.nombre, e.apellido, p.numero_auto
-from Piloto p
-inner join Empleado e on e.id_empleado = p.id_empleado
-where not exists (
-    select 1
-    from Inscripcion i
-    inner join GranPremio g on g.id_gp = i.id_gp
-    where i.id_piloto = p.id_empleado
-      and g.anio = 2026
-)
-
-
-print 'subconsulta 2: puntos promedio por fin de semana de cada piloto en 2026'
+print 'subconsulta 1: puntos promedio por fin de semana de cada piloto en 2026'
 
 select x.piloto, count(*) as grandes_premios, sum(x.puntos) as puntos,
        cast(avg(x.puntos * 1.0) as decimal(5,2)) as promedio
@@ -193,7 +189,7 @@ group by x.piloto
 order by promedio desc
 
 
-print 'subconsulta 3: cada piloto con su contrato vigente, los GP que corrio y sus puntos'
+print 'subconsulta 2: cada piloto con su contrato vigente, los GP que corrio y sus puntos'
 
 select e.apellido, p.numero_auto,
        (select c.condicion from Contrato c
@@ -207,7 +203,7 @@ inner join Empleado e on e.id_empleado = p.id_empleado
 order by puntos_2026 desc
 
 
-print 'subconsulta 4: empleados que no son pilotos y cobran mas que alguno de los pilotos'
+print 'subconsulta 3: empleados que no son pilotos y cobran mas que alguno de los pilotos'
 
 select e.apellido, e.nombre, pu.nombre as puesto, c.sueldo_mensual_usd
 from Empleado e
@@ -222,7 +218,7 @@ where e.id_empleado not in (select id_empleado from Piloto)
   )
 
 
-print 'subconsulta 5: empleados a los que se les cambio el sueldo en 2026'
+print 'subconsulta 4: empleados a los que se les cambio el sueldo en 2026'
 
 select e.apellido, e.nombre, c.sueldo_mensual_usd as sueldo_actual
 from Empleado e
@@ -232,6 +228,20 @@ where exists (
     from AuditoriaContrato a
     where a.id_contrato = c.id_contrato
       and year(a.fecha) = 2026
+)
+
+
+print 'subconsulta 5: pilotos que no corrieron ningun GP en 2026'
+
+select e.nombre, e.apellido, p.numero_auto
+from Piloto p
+inner join Empleado e on e.id_empleado = p.id_empleado
+where not exists (
+    select 1
+    from Inscripcion i
+    inner join GranPremio g on g.id_gp = i.id_gp
+    where i.id_piloto = p.id_empleado
+      and g.anio = 2026
 )
 
 
@@ -283,3 +293,15 @@ where pr.id_proveedor not in (
     from Gasto g
     where year(g.fecha) = 2026
 )
+
+
+print 'subconsulta 10: gastos que solos se llevaron mas del 10% del tope de su anio'
+
+select year(g.fecha) as anio, g.fecha, g.descripcion, g.monto_usd
+from Gasto g
+where g.monto_usd > (
+    select t.monto_usd * 0.10
+    from TopePresupuestario t
+    where t.anio = year(g.fecha)
+)
+order by g.monto_usd desc
