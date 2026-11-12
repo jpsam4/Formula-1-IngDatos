@@ -93,7 +93,7 @@ Las reglas están numeradas porque cada objeto de la base dice qué regla implem
 | RN13 | Si un piloto usa más piezas de un tipo que las permitidas en la temporada, recibe una penalización: 10 puestos la primera vez y 5 por cada pieza siguiente | Trigger de UsoComponente |
 | RN14 | Al cerrar un Gran Premio se suman los kilómetros a cada pieza usada, y la pieza que llega a su vida útil se retira | Procedimiento de cierre con cursor |
 | RN15 | Un Gran Premio se cierra una sola vez, y cerrado no acepta más usos de piezas | Procedimiento de cierre y trigger de UsoComponente |
-| RN16 | Una pieza retirada no se puede volver a usar | Trigger de UsoComponente |
+| RN16 | Una pieza retirada o dañada no se puede volver a usar | Trigger de UsoComponente |
 | RN17 | Una pieza tiene como mucho un gasto de compra | Índice único filtrado en Gasto |
 | RN18 | Para el tope solo cuentan los gastos de las categorías marcadas | Función de gasto computable |
 | RN19 | Se rechaza un gasto que haría pasar el tope del año, y también uno de un año sin tope cargado | Trigger de Gasto |
