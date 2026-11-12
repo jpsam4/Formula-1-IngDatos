@@ -45,8 +45,6 @@ Avance del documento:
 | Manejo de errores, seguridad y centralización | [doc/07_errores_seguridad.md](doc/07_errores_seguridad.md) | listo para revisar |
 | Conclusiones | [doc/08_conclusiones.md](doc/08_conclusiones.md) | listo para revisar |
 
-Para preparar la defensa está [doc/defensa.md](doc/defensa.md): cómo mostrar la base en vivo y las preguntas que nos pueden hacer.
-
 Las convenciones de nombres, tipos y manejo de errores estan en [doc/convenciones.md](doc/convenciones.md). Leerlas antes de escribir la primera tabla porfa.
 
 ## Cómo trabajamos con Git
