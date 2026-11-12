@@ -37,7 +37,7 @@ avance del documento:
 |---|---|---|
 | Descripción, alcance y reglas de negocio | [doc/01_alcance.md](doc/01_alcance.md) | listo para revisar |
 | DER | [doc/02_der.md](doc/02_der.md) | listo para revisar |
-| Normalización | [doc/03_normalizacion.md](doc/03_normalizacion.md) | pendiente |
+| Normalización | [doc/03_normalizacion.md](doc/03_normalizacion.md) | listo para revisar |
 | Modelo de tablas, diccionario de datos | | pendiente |
 | Consultas, vistas, procedimientos, triggers, cursor, funciones | | pendiente |
 | Manejo de errores, seguridad, conclusiones | | pendiente |
