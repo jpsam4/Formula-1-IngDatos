@@ -43,7 +43,9 @@ Avance del documento:
 | Consultas y subconsultas | [doc/05_consultas.md](doc/05_consultas.md) | listo para revisar |
 | Vistas, procedimientos, triggers, cursor y funciones | [doc/06_objetos.md](doc/06_objetos.md) | listo para revisar |
 | Manejo de errores, seguridad y centralización | [doc/07_errores_seguridad.md](doc/07_errores_seguridad.md) | listo para revisar |
-| Conclusiones | | pendiente |
+| Conclusiones | [doc/08_conclusiones.md](doc/08_conclusiones.md) | listo para revisar |
+
+Para preparar la defensa está [doc/defensa.md](doc/defensa.md): cómo mostrar la base en vivo y las preguntas que nos pueden hacer.
 
 Las convenciones de nombres, tipos y manejo de errores estan en [doc/convenciones.md](doc/convenciones.md). Leerlas antes de escribir la primera tabla porfa.
 
