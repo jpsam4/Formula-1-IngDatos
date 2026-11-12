@@ -1,8 +1,8 @@
-# Base de datos de una escudería de Fórmula 1
+# Base de datos de Red Bull Racing (F1)
 
 TP integrador de Ingeniería de Datos I (segundo cuatrimestre 2026, prof. Alejandro Feichubuinm).
 
-es la base de datos para la gestión interna de una sola escudería de F1, hecha en SQL Server. guarda cuatro cosas:
+es la base de datos para la gestión interna de una sola escudería de F1, Red Bull Racing, hecha en SQL Server. guarda cuatro cosas:
 
 - La parte deportiva: Grandes Premios, sesiones, resultados y puntos.
 - el personal: empleados, pilotos y contratos.
@@ -35,9 +35,9 @@ avance del documento:
 
 | Sección | Archivo | Estado |
 |---|---|---|
-| Descripción, alcance y reglas de negocio | [doc/01_alcance.md](doc/01_alcance.md) | pendiente |
-| DER | [doc/02_der.md](doc/02_der.md) | pendiente |
-| Normalización | [doc/03_normalizacion.md](doc/03_normalizacion.md) | pendiente |
+| Descripción, alcance y reglas de negocio | [doc/01_alcance.md](doc/01_alcance.md) | listo para revisar |
+| DER | [doc/02_der.md](doc/02_der.md) | listo para revisar |
+| Normalización | [doc/03_normalizacion.md](doc/03_normalizacion.md) | listo para revisar |
 | Modelo de tablas, diccionario de datos | | pendiente |
 | Consultas, vistas, procedimientos, triggers, cursor, funciones | | pendiente |
 | Manejo de errores, seguridad, conclusiones | | pendiente |
