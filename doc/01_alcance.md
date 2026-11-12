@@ -2,7 +2,7 @@
 
 ## Descripción del sistema
 
-es una base de datos para la gestión interna de una escudería de Fórmula 1. Registra lo que pasa en cada Gran Premio, quién trabaja en el equipo y con qué contrato, qué piezas usa cada auto y cuánto gasta la escudería en el año. Ademas de guardar esos datos hace cumplir las reglas del reglamento y del equipo, como el límite de piezas por temporada o el tope de gasto anual.
+es una base de datos para la gestión interna de una escudería de Fórmula 1. Elegimos Red Bull Racing. Registra lo que pasa en cada Gran Premio, quién trabaja en el equipo y con qué contrato, qué piezas usa cada auto y cuánto gasta la escudería en el año. Ademas de guardar esos datos hace cumplir las reglas del reglamento y del equipo, como el límite de piezas por temporada o el tope de gasto anual.
 
 ## Contexto
 
@@ -115,7 +115,7 @@ las reglas están numeradas porque cada objeto de la base dice qué regla implem
 son los límites que le pusimos al modelo a propósito.
 
 
-- Es una sola escudería. No guardamos a los equipos rivales, así que no hay tabla de posiciones del campeonato. Lo que sí se puede calcular es cuántos puntos sumó cada uno de nuestros pilotos.
+- Es una sola escudería (Red Bull Racing). No guardamos a los equipos rivales, así que no hay tabla de posiciones del campeonato. Lo que sí se puede calcular es cuántos puntos sumó cada uno de nuestros pilotos.
 - todos los montos estan en dólares y no manejamos tipo de cambio.
 - El tope se controla sobre los gastos operativos. Los sueldos no entran en el cálculo (en la F1 real la mayoría sí cuenta).
 - El uso de piezas se registra por Gran Premio, no por sesión.

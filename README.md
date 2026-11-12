@@ -1,8 +1,8 @@
-# Base de datos de una escudería de Fórmula 1
+# Base de datos de Red Bull Racing (F1)
 
 TP integrador de Ingeniería de Datos I (segundo cuatrimestre 2026, prof. Alejandro Feichubuinm).
 
-es la base de datos para la gestión interna de una sola escudería de F1, hecha en SQL Server. guarda cuatro cosas:
+es la base de datos para la gestión interna de una sola escudería de F1, Red Bull Racing, hecha en SQL Server. guarda cuatro cosas:
 
 - La parte deportiva: Grandes Premios, sesiones, resultados y puntos.
 - el personal: empleados, pilotos y contratos.
