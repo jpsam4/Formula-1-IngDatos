@@ -31,9 +31,6 @@ doc/der/    el DER en draw.io y sus imagenes
 doc/tablas/ el modelo de tablas en draw.io y su imagen
 scripts/    los scripts SQL, numerados en el orden en que se ejecutan
 ```
-
-El documento para entregar es [doc/TP_integrador_RedBull.pdf](doc/TP_integrador_RedBull.pdf). Tiene todas las secciones en el orden del enunciado, con carátula e índice.
-
 ## Cómo armar la base
 
 En SQL Server 2019 o posterior, abrir `scripts/TP_completo.sql` en SSMS y apretar F5. Arma la base `EscuderiaF1` desde cero, con datos, objetos y seguridad, y se puede correr de nuevo cuando haga falta.

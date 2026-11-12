@@ -19,12 +19,10 @@ Están numerados en el orden en que se ejecutan.
 
 Lo más rápido es abrir `TP_completo.sql` en SSMS y apretar F5. Arma la base entera desde cero, y se puede correr las veces que haga falta porque empieza borrando la base.
 
-También se pueden correr del 01 al 07 de a uno, en orden. Es lo que conviene mientras se trabaja en un área.
+También se pueden correr del 01 al 07 de a uno, en orden.
 
 Después, con la base recién armada, `08_consultas.sql` muestra las consultas con los resultados que figuran en el documento. `09_pruebas.sql` va al final porque cambia los datos (cierra Grandes Premios, carga compras). Cada prueba avisa con un `print` qué tiene que pasar, y si algo se acepta cuando no debería, imprime `MAL`.
 
 ## TP_completo.sql
 
 Es el 01 al 07 pegados en orden. Solo lleva `GO` donde SQL Server lo obliga: después del `create database` y antes de cada función, vista, procedimiento o trigger. El `use EscuderiaF1` del principio de cada script se saca, porque a esa altura ya se está parado en la base.
-
-No se edita a mano. Si se cambia alguno de los scripts del 01 al 07, se vuelve a armar pegándolos de nuevo, y se prueba corriéndolo dos veces seguidas.
