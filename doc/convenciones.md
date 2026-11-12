@@ -1,101 +1,91 @@
-# Convenciones del equipo
+# Convenciones
 
-> **Estado: propuesta, a confirmar por el equipo.**
->
-> El objetivo es que los scripts de las cuatro áreas sigan un mismo estilo. Una vez confirmadas, no se cambian sin acordarlo entre todos.
+las acordamos antes de escribir SQL para que el script final no parezca escrito por cuatro personas distintas. Si alguien necesita cambiar una lo charlamos y se actualiza acá.
 
-## 1. Nombres
+## Motor
 
-| Elemento | Criterio | Ejemplo |
+Microsoft SQL Server 2025. Todos escribimos y probamos los scripts en esa versión. Usamos `CREATE OR ALTER` y `DROP ... IF EXISTS` para que los scripts se puedan correr dos veces seguidas.
+
+La base se llama `EscuderiaF1` y usa un solo esquema, `dbo`.
+
+## Nombres
+
+| Qué | Cómo | Ejemplo |
 |---|---|---|
-| Base de datos | Un solo nombre para todos los scripts | `RedBullRacingF1` (a confirmar) |
-| Esquema | Uno solo: `dbo` | `dbo.GranPremio` |
-| Tablas | Singular, PascalCase, sin tildes ni eñes | `GranPremio`, `TipoComponente`, `Pais` |
-| Columnas | snake_case, sin tildes ni eñes | `fecha_inicio`, `anio`, `km_acumulados` |
-| Claves | Los nombres del modelo de datos acordado. Una FK se llama igual que la PK que referencia, salvo que el rol pida otro nombre | `id_gp`; `Inscripcion.id_piloto` → `Piloto.id_empleado` |
-| Restricciones | Prefijo + tabla (+ columna o tabla referenciada) | `PK_GranPremio`, `FK_Sesion_GranPremio`, `UQ_Pais_codigo_iso`, `CK_Resultado_estado_posicion`, `DF_GranPremio_cerrado` |
-| Índices | `IX_` para índices comunes y `UX_` para los únicos (incluidos los filtrados) | `UX_Resultado_sesion_posicion` |
+| Tablas | PascalCase, en singular | `GranPremio`, `UsoComponente` |
+| Columnas | snake_case | `fecha_inicio`, `km_acumulados` |
+| Claves primarias | `id_` más el nombre corto de la tabla | `id_gp`, `id_componente` |
+| Claves foráneas | el mismo nombre que la columna a la que apuntan, salvo que el rol pida otro | `id_gp` en Sesion apunta a `GranPremio.id_gp`; `id_piloto` en Inscripcion apunta a `Piloto.id_empleado` |
+| Funciones | `fn_` | `fn_contrato_vigente` |
+| Vistas | `vw_` | `vw_nomina` |
+| Procedimientos | `usp_` | `usp_inscribir_piloto` |
+| Triggers | `tr_` más la tabla | `tr_Contrato` |
+| Restricciones | tipo, tabla y qué controla | `CK_GranPremio_fechas`, `UQ_Inscripcion_gp_chasis`, `FK_Sesion_GranPremio`, `DF_GranPremio_cerrado` |
+| Índices | `IX_`, o `UX_` si es único | `UX_Resultado_posicion` |
 
-Así el DER, los scripts y el documento usan los mismos nombres. Los identificadores van sin tildes ni eñes; los datos sí las llevan (ver tipos de datos).
+usamos `usp_` y no `sp_` porque SQL Server busca primero en la base `master` los procedimientos que empiezan con `sp_`.
 
-## 2. Prefijos de objetos programables
+Los nombres de tablas y columnas van sin tildes ni eñes (`anio`, `Pais`). Los datos sí las llevan.
 
-| Objeto | Prefijo | Formato | Ejemplo |
-|---|---|---|---|
-| Vista | `vw_` | `vw_` + snake_case | `vw_situacion_tope` |
-| Función | `fn_` | `fn_` + snake_case | `fn_contrato_vigente` |
-| Procedimiento | `usp_` | `usp_` + snake_case | `usp_cargar_resultado` |
-| Trigger | `tr_` | `tr_` + tabla + `_` + propósito | `tr_Gasto_control_tope` |
+Las restricciones siempre llevan nombre, así cuando una falla el mensaje de error dice cuál fue.
 
-Se usa `usp_` y no `sp_`: SQL Server busca primero en la base `master` los procedimientos cuyo nombre empieza con `sp_`.
+Hay tablas cuya clave no es un `id_` inventado. Temporada y TopePresupuestario usan el año (`anio`), y las tablas que resuelven una relación (Puntaje, LimiteComponente, Resultado, UsoComponente) usan una clave compuesta.
 
-Los ejemplos son ilustrativos: el nombre definitivo de cada objeto se fija cuando se desarrolla.
+las variables dentro de procedimientos y triggers van en minúscula y cortas (`@idgp`, `@cant`, `@tot`). No hace falta que sean perfectas, que se entienda alcanza.
 
-## 3. Tipos de datos
+## Tipos de datos
 
-| Dato | Tipo | Detalle |
-|---|---|---|
-| Texto | `NVARCHAR(n)` | Para tildes y eñes. Los literales se escriben con `N'...'` |
-| Montos | `DECIMAL(14,2)` | Siempre en dólares (USD). La columna lleva el sufijo `_usd` |
-| Fechas | `DATE` | A confirmar |
-| Fecha y hora | `DATETIME2(0)` | A confirmar |
-| Sí / no | `BIT` | A confirmar (`es_sprint`, `cerrado`, `computa_tope`) |
+| Dato | Tipo |
+|---|---|
+| Identificadores | `INT IDENTITY(1,1)` |
+| Año | `SMALLINT` |
+| Texto | `NVARCHAR(n)`: 80 para nombres, 200 para descripciones |
+| Fecha | `DATE` |
+| Fecha con hora | `DATETIME2(0)` |
+| Montos | `DECIMAL(14,2)`, siempre en dólares. La columna lleva el sufijo `_usd` (`monto_usd`) |
+| Kilómetros | `DECIMAL(10,2)` |
+| Sí o no | `BIT` |
+| Números chicos (ronda, posición) | `TINYINT` |
 
-## 4. Errores
+Los textos fijos van con N adelante (`N'Finalizó'`) para que no se rompan las tildes.
 
-Todos los errores propios se lanzan con `THROW`, con un código del rango del área:
+todo es `NOT NULL` salvo que el dato de verdad pueda faltar. los casos estan en el diccionario de datos de cada tabla.
 
-| Área | Rango de códigos |
+## Códigos de error
+
+Cada área tiene su rango para los `THROW`. Por el número de un error sabemos de qué área es.
+
+| Área | Rango |
 |---|---|
 | Deportiva | 50100 a 50199 |
 | Personal | 50200 a 50299 |
 | Técnica | 50300 a 50399 |
 | Finanzas (incluida la seguridad) | 50400 a 50499 |
 
-Así, con solo ver el número de un error se sabe de qué área es.
-
-**Formato del mensaje:** `<objeto>: <descripción en minúscula, sin punto final> (RNxx)`. La referencia `(RNxx)` va cuando el error hace cumplir una regla de negocio. El estado es siempre `1`.
+Los mensajes van en castellano y dicen qué pasó, no qué hacer. Si el error hace cumplir una regla de negocio, el mensaje empieza con la regla entre corchetes. El estado es siempre `1`:
 
 ```sql
-THROW 50401, N'tr_Gasto_control_tope: el gasto supera el tope presupuestario del año (RN19)', 1;
+THROW 50201, N'[RN03] El Gran Premio ya tiene dos pilotos inscriptos.', 1;
 ```
 
-- Dentro de un `CATCH`, el error se relanza con `THROW;` (sin parámetros) para conservar el código original.
-- Cada área numera sus códigos en orden dentro de su rango y lleva una lista (código, objeto, regla, situación). Esa lista alimenta la sección de manejo de errores del documento final.
+- Dentro de un `CATCH`, el error se relanza con `THROW;` (sin parámetros) para no perder el código original.
+- Cada área numera sus códigos en orden dentro de su rango y lleva la lista (código, objeto, regla, situación) en la sección de manejo de errores del documento.
 
-## 5. Cabecera de cada bloque de SQL
+## Comentarios
 
-Cada bloque de SQL (tabla, objeto programable, consulta) lleva el autor y la regla de negocio que implementa:
+El código no se explica línea por línea: qué hace cada objeto y por qué va en el documento, en la sección de ese objeto.
+
+Lo único que lleva cada tabla y cada objeto es una cabecera de una línea con el autor y las reglas que implementa. Como la entrega no se hace por GitHub, es la forma de que en el script se vea quién hizo cada parte:
 
 ```sql
-/* ============================================================
-   Objeto : <nombre del objeto o descripción del bloque>
-   Área   : <Deportiva | Personal | Técnica | Finanzas>
-   Autor  : <nombre y apellido>
-   Reglas : <RNxx, RNyy, o "—" si no implementa ninguna>
-   Descr. : <qué hace y para qué existe>
-   ============================================================ */
+/* Autor: Nombre Apellido | Área: Personal | Reglas: RN07, RN08, RN09 */
 ```
 
-Cada `CHECK` no trivial lleva su regla en un comentario de una línea (`-- RN11`).
+Cada `CHECK` que no sea obvio lleva su regla al lado: `-- RN11`.
 
-## 6. Archivos de scripts
+## Scripts
 
-- Los scripts van en `/scripts`, guardados en UTF-8.
-- Cada `CREATE VIEW`, `FUNCTION`, `PROCEDURE` o `TRIGGER` va en su propio lote, separado con `GO`.
-
-## 7. Git y GitHub
-
-**Ramas**
-
-| Rama | Uso |
-|---|---|
-| `main` | Versión integrada y estable. Se actualiza solo por pull request. |
-| `<area>-<nombre>` | Una por integrante, para el trabajo de su área; por ejemplo, `deportiva-nombre`. |
-
-El integrador revisa y mergea a `main` los pull requests de las ramas de área.
-
-**Commits**
-
-- Mensajes cortos en español, que digan qué cambia y en qué área. Por ejemplo: `Deportiva: tabla Resultado con índice filtrado`.
-- No se versionan los backups (`.bak`) ni los archivos de datos de SQL Server (ver `.gitignore`).
+- Cada script tiene que poder correrse dos veces seguidas sin errores.
+- antes de cada `CREATE VIEW`, `FUNCTION`, `PROCEDURE` o `TRIGGER` va un `GO`, porque tienen que ser lo primero de su lote.
+- Las tablas se crean por niveles de dependencia (primero las que no apuntan a ninguna otra), no por área.
+- Los archivos se guardan en UTF-8, para que no se rompan las tildes.
