@@ -24,9 +24,7 @@ inner join TipoSesion ts on ts.id_tipo_sesion = s.id_tipo_sesion
 inner join GranPremio g on g.id_gp = s.id_gp
 inner join Inscripcion i on i.id_inscripcion = r.id_inscripcion
 inner join Empleado e on e.id_empleado = i.id_piloto
-left join Puntaje pu on pu.anio = g.anio
-                    and pu.id_tipo_sesion = s.id_tipo_sesion
-                    and pu.posicion = r.posicion
+left join Puntaje pu on pu.anio = g.anio and pu.id_tipo_sesion = s.id_tipo_sesion and pu.posicion = r.posicion
 where g.anio = 2026
   and ts.otorga_puntos = 1
 order by g.ronda, ts.nombre, r.posicion
@@ -40,9 +38,7 @@ inner join Sesion s on s.id_sesion = r.id_sesion
 inner join GranPremio g on g.id_gp = s.id_gp
 inner join Inscripcion i on i.id_inscripcion = r.id_inscripcion
 inner join Empleado e on e.id_empleado = i.id_piloto
-inner join Puntaje p on p.anio = g.anio
-                    and p.id_tipo_sesion = s.id_tipo_sesion
-                    and p.posicion = r.posicion
+inner join Puntaje p on p.anio = g.anio and p.id_tipo_sesion = s.id_tipo_sesion and p.posicion = r.posicion
 where g.anio = 2026
 group by e.apellido
 having sum(p.puntos) > 50
@@ -179,9 +175,7 @@ from (
     inner join GranPremio g on g.id_gp = s.id_gp
     inner join Inscripcion i on i.id_inscripcion = r.id_inscripcion
     inner join Empleado e on e.id_empleado = i.id_piloto
-    left join Puntaje pu on pu.anio = g.anio
-                        and pu.id_tipo_sesion = s.id_tipo_sesion
-                        and pu.posicion = r.posicion
+    left join Puntaje pu on pu.anio = g.anio and pu.id_tipo_sesion = s.id_tipo_sesion and pu.posicion = r.posicion
     where g.anio = 2026
     group by e.apellido, g.id_gp
 ) x
