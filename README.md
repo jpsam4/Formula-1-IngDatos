@@ -42,7 +42,7 @@ Avance del documento:
 | Modelo de tablas y diccionario de datos | [doc/04_tablas.md](doc/04_tablas.md) | listo para revisar |
 | Consultas y subconsultas | [doc/05_consultas.md](doc/05_consultas.md) | listo para revisar |
 | Vistas, procedimientos, triggers, cursor y funciones | [doc/06_objetos.md](doc/06_objetos.md) | listo para revisar |
-| Manejo de errores, seguridad y centralización | | pendiente |
+| Manejo de errores, seguridad y centralización | [doc/07_errores_seguridad.md](doc/07_errores_seguridad.md) | listo para revisar |
 | Conclusiones | | pendiente |
 
 Las convenciones de nombres, tipos y manejo de errores estan en [doc/convenciones.md](doc/convenciones.md). Leerlas antes de escribir la primera tabla porfa.
