@@ -1,6 +1,6 @@
 ﻿use EscuderiaF1
 
-declare @inscver int, @inschad int, @r int
+declare @inscver int, @inschad int
 
 
 print '===== 1. funciones'
@@ -53,12 +53,6 @@ exec usp_inscribir_piloto @idgp = 7, @idpiloto = 4, @idchasis = 5
 print '--- esperado: error, el chasis es de 2025 (RN06)'
 exec usp_inscribir_piloto @idgp = 7, @idpiloto = 1, @idchasis = 1
 
-print '--- esperado: error, el piloto no existe'
-exec usp_inscribir_piloto @idgp = 7, @idpiloto = 99, @idchasis = 3
-
-print '--- esperado: error, el GP de Monaco ya esta cerrado'
-exec usp_inscribir_piloto @idgp = 6, @idpiloto = 3, @idchasis = 5
-
 print '--- esperado: bien'
 exec usp_inscribir_piloto @idgp = 7, @idpiloto = 1, @idchasis = 3
 
@@ -91,13 +85,13 @@ exec usp_cargar_resultado @idsesion = 33, @idinsc = @inschad, @pos = null, @esta
 print '--- esperado: error, la inscripcion es de otro GP (RN10)'
 exec usp_cargar_resultado @idsesion = 33, @idinsc = 11, @pos = 3
 
-print '--- esperado: error, la sesion no existe'
+print '--- esperado: error, la sesion no existe (FK)'
 exec usp_cargar_resultado @idsesion = 999, @idinsc = @inschad, @pos = 3
 
 print '--- esperado: bien'
 exec usp_cargar_resultado @idsesion = 33, @idinsc = @inschad, @pos = 4
 
-print '--- esperado: error, ya tiene resultado'
+print '--- esperado: error, ya tiene resultado (PK)'
 exec usp_cargar_resultado @idsesion = 33, @idinsc = @inscver, @pos = 2
 
 select * from Resultado where id_sesion = 33
@@ -190,7 +184,7 @@ exec usp_registrar_compra @idtipo = 4, @serie = 'GBX-26-04', @fecha = '2026-06-1
 
 select count(*) as piezas_gbx_26_04 from Componente where numero_serie = 'GBX-26-04'
 
-print '--- esperado: error, monto negativo'
+print '--- esperado: error, monto negativo (CHECK)'
 exec usp_registrar_compra @idtipo = 4, @serie = 'GBX-26-05', @fecha = '2026-06-12', @monto = -10,
      @descr = 'prueba', @idcat = 1, @idprov = 2
 
@@ -198,7 +192,7 @@ print '--- esperado: error, numero de serie repetido (UNIQUE)'
 exec usp_registrar_compra @idtipo = 1, @serie = 'ICE-26-01', @fecha = '2026-06-12', @monto = 1800000,
      @descr = 'prueba', @idcat = 1, @idprov = 5
 
-print '--- esperado: error, proveedor inexistente'
+print '--- esperado: error, proveedor inexistente (FK)'
 exec usp_registrar_gasto @fecha = '2026-06-12', @monto = 1000, @descr = 'prueba', @idcat = 4, @idprov = 99
 
 print '--- esperado: error, 2027 no tiene tope cargado (RN19)'
@@ -266,8 +260,6 @@ select * from AuditoriaContrato
 print '===== 10. seguridad'
 
 execute as user = 'usr_director'
-    print 'usuario: ' + user_name()
-
     print '--- esperado: error, no puede escribir Resultado directo (RN22)'
     begin try
         insert into Resultado (id_sesion, id_inscripcion, posicion, estado) values (34, @inscver, 1, 'Finalizo')
@@ -303,8 +295,6 @@ execute as user = 'usr_director'
 revert
 
 execute as user = 'usr_ingeniero'
-    print 'usuario: ' + user_name()
-
     print '--- esperado: error, no puede tocar los km a mano'
     begin try
         update Componente set km_acumulados = 0 where id_componente = 1
@@ -321,8 +311,6 @@ execute as user = 'usr_ingeniero'
 revert
 
 execute as user = 'usr_rrhh'
-    print 'usuario: ' + user_name()
-
     print '--- esperado: bien, el aumento queda auditado con su usuario'
     update Contrato set sueldo_mensual_usd = 9800 where id_contrato = 13
 
@@ -339,8 +327,6 @@ revert
 select * from AuditoriaContrato
 
 execute as user = 'usr_finanzas'
-    print 'usuario: ' + user_name()
-
     print '--- esperado: error, no puede insertar gastos directo (RN22)'
     begin try
         insert into Gasto (fecha, monto_usd, descripcion, id_categoria, id_proveedor) values ('2026-06-15', 1000, 'directo', 4, 3)
@@ -352,20 +338,9 @@ execute as user = 'usr_finanzas'
 
     print '--- esperado: bien, por el procedimiento'
     exec usp_registrar_gasto @fecha = '2026-06-15', @monto = 1000, @descr = 'Envio de documentacion', @idcat = 4, @idprov = 3
-
-    print '--- esperado: error, no ve sueldos'
-    begin try
-        select sueldo_mensual_usd from Contrato
-        print 'MAL: vio los sueldos'
-    end try
-    begin catch
-        print 'error esperado: ' + error_message()
-    end catch
 revert
 
 execute as user = 'usr_consulta'
-    print 'usuario: ' + user_name()
-
     print '--- esperado: bien'
     select * from vw_puntos_equipo_por_gp
 

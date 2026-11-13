@@ -8,7 +8,6 @@ go
 
 use EscuderiaF1
 
-
 create table Pais (
     id_pais int identity(1,1) constraint PK_Pais primary key,
     nombre nvarchar(60) not null constraint UQ_Pais_nombre unique,
@@ -53,8 +52,6 @@ create table CategoriaGasto (
     computa_tope bit not null constraint DF_CategoriaGasto_computa default 1
 )
 
-
-
 create table Circuito (
     id_circuito int identity(1,1) not null,
     nombre nvarchar(80) not null,
@@ -63,8 +60,7 @@ create table Circuito (
     longitud_km decimal(5,3) not null,
     constraint PK_Circuito primary key (id_circuito),
     constraint UQ_Circuito_nombre unique (nombre),
-    constraint FK_Circuito_Pais
-        foreign key (id_pais) references Pais (id_pais),
+    constraint FK_Circuito_Pais foreign key (id_pais) references Pais (id_pais),
     constraint CK_Circuito_longitud check (longitud_km > 0)
 )
 
@@ -108,14 +104,10 @@ create table LimiteComponente (
     anio smallint not null,
     id_tipo int not null,
     cantidad_max tinyint not null,
-    constraint PK_LimiteComponente
-        primary key (anio, id_tipo),
-    constraint FK_LimiteComponente_Temporada
-        foreign key (anio) references Temporada (anio),
-    constraint FK_LimiteComponente_Tipo
-        foreign key (id_tipo) references TipoComponente (id_tipo),
-    constraint CK_LimiteComponente_cantidad
-        check (cantidad_max > 0)
+    constraint PK_LimiteComponente primary key (anio, id_tipo),
+    constraint FK_LimiteComponente_Temporada foreign key (anio) references Temporada (anio),
+    constraint FK_LimiteComponente_Tipo foreign key (id_tipo) references TipoComponente (id_tipo),
+    constraint CK_LimiteComponente_cantidad check (cantidad_max > 0)
 )
 
 create table Componente (
@@ -141,15 +133,11 @@ create table Proveedor (
 create table TopePresupuestario (
     anio smallint not null,
     monto_usd decimal(14,2) not null,
-    umbral_alerta_pct tinyint not null
-        constraint DF_Tope_umbral default 90
-        constraint CK_Tope_umbral check (umbral_alerta_pct between 1 and 99),
+    umbral_alerta_pct tinyint not null constraint DF_Tope_umbral default 90 constraint CK_Tope_umbral check (umbral_alerta_pct between 1 and 99),
     constraint PK_TopePresupuestario primary key (anio),
     constraint FK_Tope_Temporada foreign key (anio) references Temporada (anio),
     constraint CK_Tope_monto check (monto_usd > 0)
 )
-
-
 
 create table GranPremio (
     id_gp int identity(1,1) not null,
@@ -187,14 +175,10 @@ create table Contrato (
     sueldo_mensual_usd decimal(14,2) not null,
     condicion nvarchar(10) null,
     constraint PK_Contrato primary key (id_contrato),
-    constraint FK_Contrato_Empleado
-        foreign key (id_empleado) references Empleado (id_empleado),
-    constraint CK_Contrato_fechas
-        check (fecha_fin is null or fecha_fin > fecha_inicio),
-    constraint CK_Contrato_sueldo
-        check (sueldo_mensual_usd > 0),
-    constraint CK_Contrato_condicion
-        check (condicion is null or condicion in ('Titular', 'Reserva'))
+    constraint FK_Contrato_Empleado foreign key (id_empleado) references Empleado (id_empleado),
+    constraint CK_Contrato_fechas check (fecha_fin is null or fecha_fin > fecha_inicio),
+    constraint CK_Contrato_sueldo check (sueldo_mensual_usd > 0),
+    constraint CK_Contrato_condicion check (condicion is null or condicion in ('Titular', 'Reserva'))
 )
 
 create table Gasto (
@@ -212,8 +196,6 @@ create table Gasto (
 alter table Gasto add constraint FK_Gasto_Categoria foreign key (id_categoria) references CategoriaGasto (id_categoria)
 alter table Gasto add constraint FK_Gasto_Proveedor foreign key (id_proveedor) references Proveedor (id_proveedor)
 alter table Gasto add constraint FK_Gasto_Componente foreign key (id_componente) references Componente (id_componente)
-
-
 
 create table Sesion (
     id_sesion int identity(1,1) not null,
@@ -258,8 +240,6 @@ create table AlertaTope (
     constraint UQ_AlertaTope_gasto unique (id_gasto)
 )
 
-
-
 create table Resultado (
     id_sesion int not null,
     id_inscripcion int not null,
@@ -268,12 +248,8 @@ create table Resultado (
     constraint PK_Resultado primary key (id_sesion, id_inscripcion),
     constraint FK_Resultado_Sesion foreign key (id_sesion) references Sesion (id_sesion),
     constraint FK_Resultado_Inscripcion foreign key (id_inscripcion) references Inscripcion (id_inscripcion),
-    constraint CK_Resultado_estado
-        check (estado in ('Finalizo', 'Abandono', 'Descalificado', 'No largo')),
-    constraint CK_Resultado_posicion check (
-        (estado = 'Finalizo' and posicion is not null and posicion > 0)
-        or (estado <> 'Finalizo' and posicion is null)
-    )
+    constraint CK_Resultado_estado check (estado in ('Finalizo', 'Abandono', 'Descalificado', 'No largo')),
+    constraint CK_Resultado_posicion check ((estado = 'Finalizo' and posicion is not null and posicion > 0) or (estado <> 'Finalizo' and posicion is null))
 )
 
 create table UsoComponente (

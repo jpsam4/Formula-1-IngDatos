@@ -14,16 +14,16 @@ El modelo sirve para varias temporadas. Los datos de prueba son de la 2026.
 
 ## Equipo
 
-| Integrante | Área | Branch |
-|---|---|---|
-| a definir | Deportiva | |
-| a definir | Personal | |
-| a definir | Técnica | |
-| a definir | Finanzas y seguridad | |
+| Integrante | Área |
+|---|---|
+| Joaquin Tiago Castellano Acuna | Técnica |
+| Juan Zeljkovich | Finanzas y seguridad |
+| Juan Pedro Sama | Deportiva |
+| Santiago Ohoka | Personal |
 
-Integrador (junta los scripts y se fija que corran en orden): a definir.
+Integrador (junta los scripts y se fija que corran en orden): Joaquin Tiago Castellano Acuna.
 
-## Cómo está organizado el repo
+## Cómo está organizado
 
 ```
 doc/        el documento del TP
@@ -31,19 +31,8 @@ doc/der/    el DER en draw.io y sus imagenes
 doc/tablas/ el modelo de tablas en draw.io y su imagen
 scripts/    los scripts SQL, numerados en el orden en que se ejecutan
 ```
-
-El documento para entregar es [doc/TP_integrador_RedBull.docx](doc/TP_integrador_RedBull.docx). Tiene todas las secciones en el orden del enunciado, con carátula e índice. Faltan los legajos y quién hizo cada área (están marcados en amarillo).
-
-## Cómo trabajamos con Git
-
-1. Cada uno trabaja en su branch, con el área y su nombre: `tecnica-juan`, `finanzas-joaquin`.
-2. Se commitea a medida que se avanza, no todo junto al final. El enunciado pide que cada integrante tenga trabajo real en su branch.
-3. Cuando algo funciona se abre un pull request a `main`. El integrador lo revisa y lo mergea.
-4. En `main` solo entra lo que corre.
-
-
 ## Cómo armar la base
 
 En SQL Server 2019 o posterior, abrir `scripts/TP_completo.sql` en SSMS y apretar F5. Arma la base `EscuderiaF1` desde cero, con datos, objetos y seguridad, y se puede correr de nuevo cuando haga falta.
 
-Después se pueden correr `scripts/08_consultas.sql` (las consultas del documento) y `scripts/99_pruebas.sql` (prueba cada regla y cada error). El detalle de cada script está en [scripts/README.md](scripts/README.md).
+Después se pueden correr `scripts/08_consultas.sql` (las consultas del documento) y `scripts/09_pruebas.sql` (prueba cada regla y cada error). El detalle de cada script está en [scripts/README.md](scripts/README.md).
